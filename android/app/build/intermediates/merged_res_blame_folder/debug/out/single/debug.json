@@ -1,0 +1,26 @@
+[
+    {
+        "merged": "/Users/a1-6/.gradle/daemon/8.2/com.starcore.merge.app-merged_res-26:/xml_network_security_config.xml.flat",
+        "source": "/Users/a1-6/.gradle/daemon/8.2/com.starcore.merge.app-main-28:/xml/network_security_config.xml"
+    },
+    {
+        "merged": "/Users/a1-6/.gradle/daemon/8.2/com.starcore.merge.app-merged_res-26:/xml_file_paths.xml.flat",
+        "source": "/Users/a1-6/.gradle/daemon/8.2/com.starcore.merge.app-main-28:/xml/file_paths.xml"
+    },
+    {
+        "merged": "com.starcore.merge.app-merged_res-26:/mipmap-hdpi_ic_launcher.png.flat",
+        "source": "com.starcore.merge.app-main-28:/mipmap-hdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.starcore.merge.app-merged_res-26:/mipmap-xxhdpi_ic_launcher.png.flat",
+        "source": "com.starcore.merge.app-main-28:/mipmap-xxhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.starcore.merge.app-merged_res-26:/mipmap-xxxhdpi_ic_launcher.png.flat",
+        "source": "com.starcore.merge.app-main-28:/mipmap-xxxhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.starcore.merge.app-merged_res-26:/mipmap-xhdpi_ic_launcher.png.flat",
+        "source": "com.starcore.merge.app-main-28:/mipmap-xhdpi/ic_launcher.png"
+    }
+]

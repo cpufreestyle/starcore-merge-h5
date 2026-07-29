@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#0b0b1f" />
+  <meta name="description" content="合成星核 - 一款轻量上头的休闲益智游戏，点击相邻同色能量核心合成更高级星核，挑战连锁爆发。" />
+  <title>合成星核 · Star Core Merge</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="store/icon-192.png" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div id="app">
+    <header id="topbar">
+      <div class="stat">
+        <span class="label">分数</span>
+        <span id="score" class="value">0</span>
+      </div>
+      <div class="stat">
+        <span class="label">最高</span>
+        <span id="best" class="value">0</span>
+      </div>
+      <div class="stat mode">
+        <span class="label" id="modeLabel">无尽</span>
+        <span id="modeVal" class="value">—</span>
+      </div>
+      <button id="pauseBtn" class="iconbtn" aria-label="暂停">⏸</button>
+      <button id="rotateBtn" class="iconbtn" aria-label="横竖屏切换">↻</button>
+    </header>
+
+    <main id="boardWrap">
+      <canvas id="board"></canvas>
+    </main>
+
+    <!-- 能量条 -->
+    <div id="energyBar" class="energy-bar">
+      <div class="energy-fill" id="energyFill"></div>
+      <span class="energy-label" id="energyLabel">能量 0/20</span>
+    </div>
+
+    <!-- 道具栏 -->
+    <div id="toolbar">
+      <button class="tool" id="toolLightning" title="闪电：炸掉一个核心">
+        <span class="tool-icon">⚡</span>
+        <span class="tool-count" id="lightningCount">2</span>
+      </button>
+      <button class="tool" id="toolShuffle" title="刷新：重新洗牌">
+        <span class="tool-icon">🔄</span>
+        <span class="tool-count" id="shuffleCount">1</span>
+      </button>
+      <button class="tool" id="toolHint" title="提示：高亮可合并">
+        <span class="tool-icon">💡</span>
+        <span class="tool-count" id="hintCount">3</span>
+      </button>
+      <button class="tool" id="toolBomb" title="炸弹：清除周围3x3">
+        <span class="tool-icon">💥</span>
+        <span class="tool-count" id="bombCount">1</span>
+      </button>
+    </div>
+
+    <!-- 成就通知 -->
+    <div id="achievementPop" class="achievement-pop hidden">
+      <span class="ach-icon">🏆</span>
+      <div class="ach-text">
+        <div class="ach-title" id="achTitle">成就解锁</div>
+        <div class="ach-desc" id="achDesc"></div>
+      </div>
+    </div>
+
+    <footer id="hint">点击一个能量核心，再点相邻同色核心即可合并升级</footer>
+  </div>
+
+  <!-- 开始菜单 -->
+  <div id="menuOverlay" class="overlay">
+    <div class="panel">
+      <h1 class="logo">合成星核</h1>
+      <p class="sub">STAR CORE MERGE</p>
+      <p class="desc">点击相邻同色能量核心，合成更高级星核。<br />把星核推到顶级，它会爆发并连锁清场！</p>
+      <button class="btn primary" data-mode="classic">无尽模式</button>
+      <button class="btn" data-mode="timed">计时挑战 · 60 秒</button>
+      <button class="btn" data-mode="puzzle">解谜模式 · 20 关</button>
+      <button class="btn" data-mode="daily" id="dailyBtn">📅 每日挑战</button>
+      <button class="btn ghost" id="boardBtn">🏆 排行榜</button>
+      <button class="btn ghost" id="achBtn">🎖️ 成就墙</button>
+      <button class="btn ghost" id="shopBtn">🛒 道具商店</button>
+      <button class="btn ghost" id="adBtn">📺 看广告领星核币</button>
+      <p class="tip">最高分自动保存在本机</p>
+      <div class="coin-display" id="coinDisplay">💎 0</div>
+    </div>
+  </div>
+
+  <!-- 暂停 -->
+  <div id="pauseOverlay" class="overlay hidden">
+    <div class="panel">
+      <h2>已暂停</h2>
+      <button class="btn primary" id="resumeBtn">继续</button>
+      <button class="btn" id="restartBtn">重新开始</button>
+      <button class="btn ghost" id="menuBtn">返回菜单</button>
+    </div>
+  </div>
+
+  <!-- 结束 -->
+  <div id="overOverlay" class="overlay hidden">
+    <div class="panel">
+      <h2 id="overTitle">游戏结束</h2>
+      <p class="finalScore">本局得分 <span id="finalScore">0</span></p>
+      <p class="bestLine">历史最高 <span id="finalBest">0</span></p>
+      <button class="btn primary" id="againBtn">再来一局</button>
+      <button class="btn" id="reviveBtn">💎 花费 50 星核币续命</button>
+      <button class="btn" id="shareBtn">分享成绩</button>
+      <button class="btn ghost" id="overMenuBtn">返回菜单</button>
+    </div>
+  </div>
+
+  <!-- 排行榜 -->
+  <div id="boardOverlay" class="overlay hidden">
+    <div class="panel">
+      <h2>🏆 排行榜</h2>
+      <ol id="boardList" class="board-list"></ol>
+      <button class="btn primary" id="boardCloseBtn">返回</button>
+    </div>
+  </div>
+
+  <!-- 成就墙 -->
+  <div id="achOverlay" class="overlay hidden">
+    <div class="panel">
+      <h2>🎖️ 成就墙</h2>
+      <div id="achGrid" class="ach-grid"></div>
+      <button class="btn primary" id="achCloseBtn">返回</button>
+    </div>
+  </div>
+
+  <!-- 解谜模式信息 -->
+  <div id="puzzleInfo" class="overlay hidden">
+    <div class="panel">
+      <h2 id="puzzleTitle">解谜模式</h2>
+      <p class="desc" id="puzzleDesc"></p>
+      <p class="tip" id="puzzleGoal"></p>
+      <button class="btn primary" id="puzzleStartBtn">开始挑战</button>
+      <button class="btn ghost" id="puzzleBackBtn">返回菜单</button>
+    </div>
+  </div>
+
+  <!-- 连击风暴提示 -->
+  <div id="comboBanner" class="combo-banner"></div>
+
+  <!-- 每日挑战结果 -->
+  <div id="dailyOverlay" class="overlay hidden">
+    <div class="panel">
+      <h2 id="dailyTitle">📅 每日挑战</h2>
+      <p class="desc" id="dailyDesc"></p>
+      <p class="tip" id="dailyTip"></p>
+      <button class="btn primary" id="dailyStartBtn">开始挑战</button>
+      <button class="btn ghost" id="dailyBackBtn">返回菜单</button>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <!-- 道具商店 -->
+  <div id="shopOverlay" class="overlay hidden">
+    <div class="panel shop-panel">
+      <h2>🛒 道具商店</h2>
+      <div class="coin-display" id="shopCoinDisplay">💎 0</div>
+      <div class="shop-section">
+        <h3 class="shop-title">道具补充</h3>
+        <div class="shop-grid" id="shopItems"></div>
+      </div>
+      <div class="shop-section">
+        <h3 class="shop-title">🌟 皮肤主题</h3>
+        <div class="shop-grid" id="shopSkins"></div>
+      </div>
+      <div class="shop-section">
+        <h3 class="shop-title">💎 星核币</h3>
+        <div class="shop-grid" id="shopCoins"></div>
+      </div>
+      <div class="shop-section">
+        <h3 class="shop-title">🎫 通行证</h3>
+        <div class="shop-pass" id="shopPass"></div>
+      </div>
+      <button class="btn primary" id="shopCloseBtn">返回</button>
+    </div>
+  </div>
+
+  <!-- 激励视频广告 -->
+  <div id="adOverlay" class="overlay hidden">
+    <div class="panel ad-panel">
+      <h2>📺 观看广告</h2>
+      <p class="desc" id="adDesc">观看广告获取免费奖励</p>
+      <div class="ad-reward" id="adReward"></div>
+      <div class="ad-progress-bar">
+        <div class="ad-progress-fill" id="adProgressFill"></div>
+      </div>
+      <p class="tip" id="adTip">广告播放中…</p>
+      <button class="btn primary hidden" id="adClaimBtn">领取奖励</button>
+      <button class="btn ghost" id="adSkipBtn">跳过</button>
+    </div>
+  </div>
+
+  <script src="js/audio.js"></script>
+  <script src="js/shop.js"></script>
+  <script src="js/game.js"></script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+{
+  "name": "合成星核",
+  "short_name": "合成星核",
+  "description": "合成星核 Star Core Merge：点击相邻同色能量核心合成更高级星核，触发连锁爆发。支持横竖屏自适应切换，内置激励广告与内购商店（星核币 / 皮肤 / 通行证）。",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0b0b1f",
+  "theme_color": "#0b0b1f",
+  "lang": "zh-CN",
+  "icons": [
+    { "src": "store/icon-72.png", "sizes": "72x72", "type": "image/png" },
+    { "src": "store/icon-96.png", "sizes": "96x96", "type": "image/png" },
+    { "src": "store/icon-144.png", "sizes": "144x144", "type": "image/png" },
+    { "src": "store/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "store/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.starcore.merge.app-mergeDebugResources-24:/values-night-v8/values-night-v8.xml",
+            "map": [
+                {
+                    "source": "/Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/res/values-night-v8/values-night-v8.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6",
+                        "startColumns": "4,4,4,4,4",
+                        "startOffsets": "55,106,173,238,295",
+                        "endColumns": "50,66,64,56,50",
+                        "endOffsets": "101,168,233,290,341"
+                    }
+                },
+                {
+                    "source": "/Users/a1-6/.gradle/caches/transforms-3/99098ba1da4e9d6af24f8810b793437f/transformed/appcompat-1.6.1/res/values-night-v8/values-night-v8.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6,7,8,9",
+                        "startColumns": "4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,125,209,293,389,491,593,687",
+                        "endColumns": "69,83,83,95,101,101,93,88",
+                        "endOffsets": "120,204,288,384,486,588,682,771"
+                    },
+                    "to": {
+                        "startLines": "7,8,9,10,11,12,13,14",
+                        "startColumns": "4,4,4,4,4,4,4,4",
+                        "startOffsets": "346,416,500,584,680,782,884,978",
+                        "endColumns": "69,83,83,95,101,101,93,88",
+                        "endOffsets": "411,495,579,675,777,879,973,1062"
+                    }
+                }
+            ]
+        }
+    ]
+}

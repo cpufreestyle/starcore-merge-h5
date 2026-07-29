@@ -1,0 +1,450 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.starcore.merge"
+4    android:versionCode="2"
+5    android:versionName="1.2.0" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="24"
+9        android:targetSdkVersion="34" />
+10
+11    <!-- 网络权限 -->
+12    <uses-permission android:name="android.permission.INTERNET" />
+12-->/Users/a1-6/WorkBuddy/2026-07-18-18-42-37/taptap-game/android/app/src/main/AndroidManifest.xml:6:5-67
+12-->/Users/a1-6/WorkBuddy/2026-07-18-18-42-37/taptap-game/android/app/src/main/AndroidManifest.xml:6:22-64
+13    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+13-->/Users/a1-6/WorkBuddy/2026-07-18-18-42-37/taptap-game/android/app/src/main/AndroidManifest.xml:7:5-79
+13-->/Users/a1-6/WorkBuddy/2026-07-18-18-42-37/taptap-game/android/app/src/main/AndroidManifest.xml:7:22-76
+14
+15    <!-- Dirichlet (TapADN) 广告 SDK 权限 -->
+16    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+16-->/Users/a1-6/WorkBuddy/2026-07-18-18-42-37/taptap-game/android/app/src/main/AndroidManifest.xml:10:5-75
+16-->/Users/a1-6/WorkBuddy/2026-07-18-18-42-37/taptap-game/android/app/src/main/AndroidManifest.xml:10:22-72
+17    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
+17-->/Users/a1-6/WorkBuddy/2026-07-18-18-42-37/taptap-game/android/app/src/main/AndroidManifest.xml:11:5-77
+17-->/Users/a1-6/WorkBuddy/2026-07-18-18-42-37/taptap-game/android/app/src/main/AndroidManifest.xml:11:22-74
+18    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+18-->/Users/a1-6/WorkBuddy/2026-07-18-18-42-37/taptap-game/android/app/src/main/AndroidManifest.xml:12:5-83
+18-->/Users/a1-6/WorkBuddy/2026-07-18-18-42-37/taptap-game/android/app/src/main/AndroidManifest.xml:12:22-80
+19    <uses-permission android:name="android.permission.BLUETOOTH" />
+19-->/Users/a1-6/WorkBuddy/2026-07-18-18-42-37/taptap-game/android/app/src/main/AndroidManifest.xml:13:5-68
+19-->/Users/a1-6/WorkBuddy/2026-07-18-18-42-37/taptap-game/android/app/src/main/AndroidManifest.xml:13:22-65
+20    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+20-->/Users/a1-6/WorkBuddy/2026-07-18-18-42-37/taptap-game/android/app/src/main/AndroidManifest.xml:14:5-76
+20-->/Users/a1-6/WorkBuddy/2026-07-18-18-42-37/taptap-game/android/app/src/main/AndroidManifest.xml:14:22-73
+21    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+21-->/Users/a1-6/WorkBuddy/2026-07-18-18-42-37/taptap-game/android/app/src/main/AndroidManifest.xml:15:5-79
+21-->/Users/a1-6/WorkBuddy/2026-07-18-18-42-37/taptap-game/android/app/src/main/AndroidManifest.xml:15:22-76
+22    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+22-->/Users/a1-6/WorkBuddy/2026-07-18-18-42-37/taptap-game/android/app/src/main/AndroidManifest.xml:16:5-81
+22-->/Users/a1-6/WorkBuddy/2026-07-18-18-42-37/taptap-game/android/app/src/main/AndroidManifest.xml:16:22-78
+23    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+23-->/Users/a1-6/WorkBuddy/2026-07-18-18-42-37/taptap-game/android/app/src/main/AndroidManifest.xml:17:5-77
+23-->/Users/a1-6/WorkBuddy/2026-07-18-18-42-37/taptap-game/android/app/src/main/AndroidManifest.xml:17:22-74
+24    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+24-->/Users/a1-6/WorkBuddy/2026-07-18-18-42-37/taptap-game/android/app/src/main/AndroidManifest.xml:18:5-81
+24-->/Users/a1-6/WorkBuddy/2026-07-18-18-42-37/taptap-game/android/app/src/main/AndroidManifest.xml:18:22-78
+25    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+25-->/Users/a1-6/WorkBuddy/2026-07-18-18-42-37/taptap-game/android/app/src/main/AndroidManifest.xml:19:5-80
+25-->/Users/a1-6/WorkBuddy/2026-07-18-18-42-37/taptap-game/android/app/src/main/AndroidManifest.xml:19:22-77
+26    <uses-permission android:name="android.permission.WAKE_LOCK" />
+26-->/Users/a1-6/WorkBuddy/2026-07-18-18-42-37/taptap-game/android/app/src/main/AndroidManifest.xml:20:5-68
+26-->/Users/a1-6/WorkBuddy/2026-07-18-18-42-37/taptap-game/android/app/src/main/AndroidManifest.xml:20:22-65
+27
+28    <queries>
+28-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:15:5-21:15
+29        <intent>
+29-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:16:9-18:18
+30            <action android:name="android.intent.action.MAIN" />
+30-->/Users/a1-6/WorkBuddy/2026-07-18-18-42-37/taptap-game/android/app/src/main/AndroidManifest.xml:39:17-69
+30-->/Users/a1-6/WorkBuddy/2026-07-18-18-42-37/taptap-game/android/app/src/main/AndroidManifest.xml:39:25-66
+31        </intent>
+32
+33        <package android:name="com.tencent.mm" />
+33-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:20:9-50
+33-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:20:18-47
+34
+35        <intent> <!-- H5 支持手淘登录 -->
+35-->[com.alipay.sdk:alipaysdk-android:15.8.17] /Users/a1-6/.gradle/caches/transforms-3/0635c7b8f6bf73c6d26805032815484d/transformed/jetified-alipaysdk-android-15.8.17/AndroidManifest.xml:10:9-14:18
+36            <action android:name="*" />
+36-->[com.alipay.sdk:alipaysdk-android:15.8.17] /Users/a1-6/.gradle/caches/transforms-3/0635c7b8f6bf73c6d26805032815484d/transformed/jetified-alipaysdk-android-15.8.17/AndroidManifest.xml:11:13-40
+36-->[com.alipay.sdk:alipaysdk-android:15.8.17] /Users/a1-6/.gradle/caches/transforms-3/0635c7b8f6bf73c6d26805032815484d/transformed/jetified-alipaysdk-android-15.8.17/AndroidManifest.xml:11:21-37
+37
+38            <data android:scheme="tbopen" />
+38-->/Users/a1-6/WorkBuddy/2026-07-18-18-42-37/taptap-game/android/app/src/main/AndroidManifest.xml:64:17-54
+38-->/Users/a1-6/WorkBuddy/2026-07-18-18-42-37/taptap-game/android/app/src/main/AndroidManifest.xml:64:23-51
+39        </intent>
+40
+41        <package android:name="com.eg.android.AlipayGphone" /> <!-- 支付宝 app -->
+41-->[com.alipay.sdk:alipaysdk-android:15.8.17] /Users/a1-6/.gradle/caches/transforms-3/0635c7b8f6bf73c6d26805032815484d/transformed/jetified-alipaysdk-android-15.8.17/AndroidManifest.xml:16:9-63
+41-->[com.alipay.sdk:alipaysdk-android:15.8.17] /Users/a1-6/.gradle/caches/transforms-3/0635c7b8f6bf73c6d26805032815484d/transformed/jetified-alipaysdk-android-15.8.17/AndroidManifest.xml:16:18-60
+42        <package android:name="com.eg.android.AlipayGphoneRC" /> <!-- 沙箱支付宝 app -->
+42-->[com.alipay.sdk:alipaysdk-android:15.8.17] /Users/a1-6/.gradle/caches/transforms-3/0635c7b8f6bf73c6d26805032815484d/transformed/jetified-alipaysdk-android-15.8.17/AndroidManifest.xml:17:9-65
+42-->[com.alipay.sdk:alipaysdk-android:15.8.17] /Users/a1-6/.gradle/caches/transforms-3/0635c7b8f6bf73c6d26805032815484d/transformed/jetified-alipaysdk-android-15.8.17/AndroidManifest.xml:17:18-62
+43        <package android:name="hk.alipay.wallet" /> <!-- 香港版支付宝 app -->
+43-->[com.alipay.sdk:alipaysdk-android:15.8.17] /Users/a1-6/.gradle/caches/transforms-3/0635c7b8f6bf73c6d26805032815484d/transformed/jetified-alipaysdk-android-15.8.17/AndroidManifest.xml:18:9-52
+43-->[com.alipay.sdk:alipaysdk-android:15.8.17] /Users/a1-6/.gradle/caches/transforms-3/0635c7b8f6bf73c6d26805032815484d/transformed/jetified-alipaysdk-android-15.8.17/AndroidManifest.xml:18:18-49
+44        <package android:name="hk.alipay.walletRC" />
+44-->[com.alipay.sdk:alipaysdk-android:15.8.17] /Users/a1-6/.gradle/caches/transforms-3/0635c7b8f6bf73c6d26805032815484d/transformed/jetified-alipaysdk-android-15.8.17/AndroidManifest.xml:19:9-54
+44-->[com.alipay.sdk:alipaysdk-android:15.8.17] /Users/a1-6/.gradle/caches/transforms-3/0635c7b8f6bf73c6d26805032815484d/transformed/jetified-alipaysdk-android-15.8.17/AndroidManifest.xml:19:18-51
+45    </queries>
+46
+47    <permission
+47-->[androidx.core:core:1.9.0] /Users/a1-6/.gradle/caches/transforms-3/6b8f70eacaea457f2c8ec8c1d2a003d3/transformed/core-1.9.0/AndroidManifest.xml:22:5-24:47
+48        android:name="com.starcore.merge.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+48-->[androidx.core:core:1.9.0] /Users/a1-6/.gradle/caches/transforms-3/6b8f70eacaea457f2c8ec8c1d2a003d3/transformed/core-1.9.0/AndroidManifest.xml:23:9-81
+49        android:protectionLevel="signature" />
+49-->[androidx.core:core:1.9.0] /Users/a1-6/.gradle/caches/transforms-3/6b8f70eacaea457f2c8ec8c1d2a003d3/transformed/core-1.9.0/AndroidManifest.xml:24:9-44
+50
+51    <uses-permission android:name="com.starcore.merge.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+51-->[androidx.core:core:1.9.0] /Users/a1-6/.gradle/caches/transforms-3/6b8f70eacaea457f2c8ec8c1d2a003d3/transformed/core-1.9.0/AndroidManifest.xml:26:5-97
+51-->[androidx.core:core:1.9.0] /Users/a1-6/.gradle/caches/transforms-3/6b8f70eacaea457f2c8ec8c1d2a003d3/transformed/core-1.9.0/AndroidManifest.xml:26:22-94
+52
+53    <supports-screens
+53-->[com.alipay.sdk:alipaysdk-android:15.8.17] /Users/a1-6/.gradle/caches/transforms-3/0635c7b8f6bf73c6d26805032815484d/transformed/jetified-alipaysdk-android-15.8.17/AndroidManifest.xml:22:5-27:39
+54        android:anyDensity="true"
+54-->[com.alipay.sdk:alipaysdk-android:15.8.17] /Users/a1-6/.gradle/caches/transforms-3/0635c7b8f6bf73c6d26805032815484d/transformed/jetified-alipaysdk-android-15.8.17/AndroidManifest.xml:23:9-34
+55        android:largeScreens="true"
+55-->[com.alipay.sdk:alipaysdk-android:15.8.17] /Users/a1-6/.gradle/caches/transforms-3/0635c7b8f6bf73c6d26805032815484d/transformed/jetified-alipaysdk-android-15.8.17/AndroidManifest.xml:24:9-36
+56        android:normalScreens="true"
+56-->[com.alipay.sdk:alipaysdk-android:15.8.17] /Users/a1-6/.gradle/caches/transforms-3/0635c7b8f6bf73c6d26805032815484d/transformed/jetified-alipaysdk-android-15.8.17/AndroidManifest.xml:25:9-37
+57        android:resizeable="true"
+57-->[com.alipay.sdk:alipaysdk-android:15.8.17] /Users/a1-6/.gradle/caches/transforms-3/0635c7b8f6bf73c6d26805032815484d/transformed/jetified-alipaysdk-android-15.8.17/AndroidManifest.xml:26:9-34
+58        android:smallScreens="true" />
+58-->[com.alipay.sdk:alipaysdk-android:15.8.17] /Users/a1-6/.gradle/caches/transforms-3/0635c7b8f6bf73c6d26805032815484d/transformed/jetified-alipaysdk-android-15.8.17/AndroidManifest.xml:27:9-36
+59
+60    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+60-->[com.alipay.sdk:alipaysdk-android:15.8.17] /Users/a1-6/.gradle/caches/transforms-3/0635c7b8f6bf73c6d26805032815484d/transformed/jetified-alipaysdk-android-15.8.17/AndroidManifest.xml:31:5-76
+60-->[com.alipay.sdk:alipaysdk-android:15.8.17] /Users/a1-6/.gradle/caches/transforms-3/0635c7b8f6bf73c6d26805032815484d/transformed/jetified-alipaysdk-android-15.8.17/AndroidManifest.xml:31:22-73
+61
+62    <application
+62-->/Users/a1-6/WorkBuddy/2026-07-18-18-42-37/taptap-game/android/app/src/main/AndroidManifest.xml:22:5-68:19
+63        android:allowBackup="true"
+63-->/Users/a1-6/WorkBuddy/2026-07-18-18-42-37/taptap-game/android/app/src/main/AndroidManifest.xml:23:9-35
+64        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+64-->[androidx.core:core:1.9.0] /Users/a1-6/.gradle/caches/transforms-3/6b8f70eacaea457f2c8ec8c1d2a003d3/transformed/core-1.9.0/AndroidManifest.xml:28:18-86
+65        android:debuggable="true"
+66        android:extractNativeLibs="false"
+67        android:hardwareAccelerated="true"
+67-->/Users/a1-6/WorkBuddy/2026-07-18-18-42-37/taptap-game/android/app/src/main/AndroidManifest.xml:27:9-43
+68        android:icon="@mipmap/ic_launcher"
+68-->/Users/a1-6/WorkBuddy/2026-07-18-18-42-37/taptap-game/android/app/src/main/AndroidManifest.xml:24:9-43
+69        android:label="合成星核"
+69-->/Users/a1-6/WorkBuddy/2026-07-18-18-42-37/taptap-game/android/app/src/main/AndroidManifest.xml:25:9-29
+70        android:networkSecurityConfig="@xml/network_security_config"
+70-->/Users/a1-6/WorkBuddy/2026-07-18-18-42-37/taptap-game/android/app/src/main/AndroidManifest.xml:29:9-69
+71        android:theme="@style/AppTheme"
+71-->/Users/a1-6/WorkBuddy/2026-07-18-18-42-37/taptap-game/android/app/src/main/AndroidManifest.xml:26:9-40
+72        android:usesCleartextTraffic="true" >
+72-->/Users/a1-6/WorkBuddy/2026-07-18-18-42-37/taptap-game/android/app/src/main/AndroidManifest.xml:28:9-44
+73
+74        <!-- 主 Activity -->
+75        <activity
+75-->/Users/a1-6/WorkBuddy/2026-07-18-18-42-37/taptap-game/android/app/src/main/AndroidManifest.xml:32:9-42:20
+76            android:name="com.starcore.merge.MainActivity"
+76-->/Users/a1-6/WorkBuddy/2026-07-18-18-42-37/taptap-game/android/app/src/main/AndroidManifest.xml:33:13-41
+77            android:configChanges="orientation|screenSize|keyboardHidden"
+77-->/Users/a1-6/WorkBuddy/2026-07-18-18-42-37/taptap-game/android/app/src/main/AndroidManifest.xml:35:13-74
+78            android:exported="true"
+78-->/Users/a1-6/WorkBuddy/2026-07-18-18-42-37/taptap-game/android/app/src/main/AndroidManifest.xml:34:13-36
+79            android:launchMode="singleTask"
+79-->/Users/a1-6/WorkBuddy/2026-07-18-18-42-37/taptap-game/android/app/src/main/AndroidManifest.xml:37:13-44
+80            android:screenOrientation="portrait" >
+80-->/Users/a1-6/WorkBuddy/2026-07-18-18-42-37/taptap-game/android/app/src/main/AndroidManifest.xml:36:13-49
+81            <intent-filter>
+81-->/Users/a1-6/WorkBuddy/2026-07-18-18-42-37/taptap-game/android/app/src/main/AndroidManifest.xml:38:13-41:29
+82                <action android:name="android.intent.action.MAIN" />
+82-->/Users/a1-6/WorkBuddy/2026-07-18-18-42-37/taptap-game/android/app/src/main/AndroidManifest.xml:39:17-69
+82-->/Users/a1-6/WorkBuddy/2026-07-18-18-42-37/taptap-game/android/app/src/main/AndroidManifest.xml:39:25-66
+83
+84                <category android:name="android.intent.category.LAUNCHER" />
+84-->/Users/a1-6/WorkBuddy/2026-07-18-18-42-37/taptap-game/android/app/src/main/AndroidManifest.xml:40:17-77
+84-->/Users/a1-6/WorkBuddy/2026-07-18-18-42-37/taptap-game/android/app/src/main/AndroidManifest.xml:40:27-74
+85            </intent-filter>
+86        </activity>
+87
+88        <!-- Dirichlet (TapADN) FileProvider -->
+89        <provider
+90            android:name="com.tapsdk.tapad.internal.TapADFileProvider"
+90-->/Users/a1-6/WorkBuddy/2026-07-18-18-42-37/taptap-game/android/app/src/main/AndroidManifest.xml:47:13-71
+91            android:authorities="com.starcore.merge.com.tds.ad.fileprovider"
+91-->/Users/a1-6/WorkBuddy/2026-07-18-18-42-37/taptap-game/android/app/src/main/AndroidManifest.xml:46:13-75
+92            android:exported="false"
+92-->/Users/a1-6/WorkBuddy/2026-07-18-18-42-37/taptap-game/android/app/src/main/AndroidManifest.xml:48:13-37
+93            android:grantUriPermissions="true" >
+93-->/Users/a1-6/WorkBuddy/2026-07-18-18-42-37/taptap-game/android/app/src/main/AndroidManifest.xml:49:13-47
+94            <meta-data
+94-->/Users/a1-6/WorkBuddy/2026-07-18-18-42-37/taptap-game/android/app/src/main/AndroidManifest.xml:50:13-53:52
+95                android:name="android.support.FILE_PROVIDER_PATHS"
+95-->/Users/a1-6/WorkBuddy/2026-07-18-18-42-37/taptap-game/android/app/src/main/AndroidManifest.xml:51:17-67
+96                android:resource="@xml/file_paths" />
+96-->/Users/a1-6/WorkBuddy/2026-07-18-18-42-37/taptap-game/android/app/src/main/AndroidManifest.xml:52:17-51
+97        </provider>
+98
+99        <!-- 微信支付回调 Activity -->
+100        <activity
+100-->/Users/a1-6/WorkBuddy/2026-07-18-18-42-37/taptap-game/android/app/src/main/AndroidManifest.xml:57:9-66:20
+101            android:name="com.starcore.merge.WXPayEntryActivity"
+101-->/Users/a1-6/WorkBuddy/2026-07-18-18-42-37/taptap-game/android/app/src/main/AndroidManifest.xml:58:13-47
+102            android:exported="true"
+102-->/Users/a1-6/WorkBuddy/2026-07-18-18-42-37/taptap-game/android/app/src/main/AndroidManifest.xml:59:13-36
+103            android:launchMode="singleTop" >
+103-->/Users/a1-6/WorkBuddy/2026-07-18-18-42-37/taptap-game/android/app/src/main/AndroidManifest.xml:60:13-43
+104            <intent-filter>
+104-->/Users/a1-6/WorkBuddy/2026-07-18-18-42-37/taptap-game/android/app/src/main/AndroidManifest.xml:61:13-65:29
+105                <action android:name="android.intent.action.VIEW" />
+105-->/Users/a1-6/WorkBuddy/2026-07-18-18-42-37/taptap-game/android/app/src/main/AndroidManifest.xml:62:17-69
+105-->/Users/a1-6/WorkBuddy/2026-07-18-18-42-37/taptap-game/android/app/src/main/AndroidManifest.xml:62:25-66
+106
+107                <category android:name="android.intent.category.DEFAULT" />
+107-->/Users/a1-6/WorkBuddy/2026-07-18-18-42-37/taptap-game/android/app/src/main/AndroidManifest.xml:63:17-76
+107-->/Users/a1-6/WorkBuddy/2026-07-18-18-42-37/taptap-game/android/app/src/main/AndroidManifest.xml:63:27-73
+108
+109                <data android:scheme="starcore_wx" />
+109-->/Users/a1-6/WorkBuddy/2026-07-18-18-42-37/taptap-game/android/app/src/main/AndroidManifest.xml:64:17-54
+109-->/Users/a1-6/WorkBuddy/2026-07-18-18-42-37/taptap-game/android/app/src/main/AndroidManifest.xml:64:23-51
+110            </intent-filter>
+111        </activity>
+112
+113        <!-- 标准视频广告Activity：竖屏 -->
+114        <activity
+114-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:26:9-34:70
+115            android:name="com.tapsdk.tapad.stub.activity.Stub_Standard_Portrait_Activity"
+115-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:27:13-90
+116            android:configChanges="orientation|keyboardHidden|navigation|screenSize"
+116-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:28:13-85
+117            android:exported="false"
+117-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:29:13-37
+118            android:launchMode="standard"
+118-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:30:13-42
+119            android:multiprocess="true"
+119-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:31:13-40
+120            android:screenOrientation="portrait"
+120-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:32:13-49
+121            android:theme="@style/TapAD.Activity.Standard"
+121-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:33:13-59
+122            android:windowSoftInputMode="adjustResize|stateHidden" /> <!-- 标准视频广告Activity：横屏 -->
+122-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:34:13-67
+123        <activity
+123-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:37:9-45:70
+124            android:name="com.tapsdk.tapad.stub.activity.Stub_Standard_Landscape_Activity"
+124-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:38:13-91
+125            android:configChanges="orientation|keyboardHidden|navigation|screenSize"
+125-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:39:13-85
+126            android:exported="false"
+126-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:40:13-37
+127            android:launchMode="standard"
+127-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:41:13-42
+128            android:multiprocess="true"
+128-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:42:13-40
+129            android:screenOrientation="landscape"
+129-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:43:13-50
+130            android:theme="@style/TapAD.Activity.Standard"
+130-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:44:13-59
+131            android:windowSoftInputMode="adjustResize|stateHidden" /> <!-- 试玩广告Activity：竖屏 -->
+131-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:45:13-67
+132        <activity
+132-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:48:9-56:70
+133            android:name="com.tapsdk.tapad.stub.activity.Stub_Playable_Portrait_Activity"
+133-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:49:13-90
+134            android:configChanges="orientation|keyboardHidden|navigation|screenSize"
+134-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:50:13-85
+135            android:exported="false"
+135-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:51:13-37
+136            android:launchMode="standard"
+136-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:52:13-42
+137            android:multiprocess="true"
+137-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:53:13-40
+138            android:screenOrientation="portrait"
+138-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:54:13-49
+139            android:theme="@style/TapAD.Activity.Standard"
+139-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:55:13-59
+140            android:windowSoftInputMode="adjustResize|stateHidden" /> <!-- 试玩广告Activity：横屏 -->
+140-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:56:13-67
+141        <activity
+141-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:59:9-67:70
+142            android:name="com.tapsdk.tapad.stub.activity.Stub_Playable_Landscape_Activity"
+142-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:60:13-91
+143            android:configChanges="orientation|keyboardHidden|navigation|screenSize"
+143-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:61:13-85
+144            android:exported="false"
+144-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:62:13-37
+145            android:launchMode="standard"
+145-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:63:13-42
+146            android:multiprocess="true"
+146-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:64:13-40
+147            android:screenOrientation="landscape"
+147-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:65:13-50
+148            android:theme="@style/TapAD.Activity.Standard"
+148-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:66:13-59
+149            android:windowSoftInputMode="adjustResize|stateHidden" /> <!-- 通用竖屏广告Activity：支持插屏、激励视频等多种广告类型 -->
+149-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:67:13-67
+150        <activity
+150-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:70:9-78:70
+151            android:name="com.tapsdk.tapad.stub.activity.Stub_Portrait_Activity"
+151-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:71:13-81
+152            android:configChanges="orientation|keyboardHidden|navigation|screenSize"
+152-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:72:13-85
+153            android:exported="false"
+153-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:73:13-37
+154            android:launchMode="standard"
+154-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:74:13-42
+155            android:multiprocess="true"
+155-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:75:13-40
+156            android:screenOrientation="sensorPortrait"
+156-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:76:13-55
+157            android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"
+157-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:77:13-83
+158            android:windowSoftInputMode="adjustResize|stateHidden" /> <!-- 通用横屏广告Activity：支持插屏、激励视频等多种广告类型 -->
+158-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:78:13-67
+159        <activity
+159-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:81:9-89:70
+160            android:name="com.tapsdk.tapad.stub.activity.Stub_Landscape_Activity"
+160-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:82:13-82
+161            android:configChanges="orientation|keyboardHidden|navigation|screenSize"
+161-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:83:13-85
+162            android:exported="false"
+162-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:84:13-37
+163            android:launchMode="standard"
+163-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:85:13-42
+164            android:multiprocess="true"
+164-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:86:13-40
+165            android:screenOrientation="sensorLandscape"
+165-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:87:13-56
+166            android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"
+166-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:88:13-83
+167            android:windowSoftInputMode="adjustResize|stateHidden" />
+167-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:89:13-67
+168        <activity
+168-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:90:9-96:61
+169            android:name="com.tapsdk.tapad.internal.ui.views.web.BrowserActivity"
+169-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:91:13-82
+170            android:exported="false"
+170-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:92:13-37
+171            android:hardwareAccelerated="true"
+171-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:93:13-47
+172            android:multiprocess="true"
+172-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:94:13-40
+173            android:screenOrientation="sensor"
+173-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:95:13-47
+174            android:theme="@style/TapAD.Activity.Browser" /> <!-- 安装或打开应用透明Activity -->
+174-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:96:13-58
+175        <activity
+175-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:99:9-105:70
+176            android:name="com.tapsdk.tapad.stub.activity.Stub_Install_or_OpenApp_Translucent_Activity"
+176-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:100:13-103
+177            android:configChanges="orientation|keyboardHidden|navigation|screenSize"
+177-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:101:13-85
+178            android:exported="false"
+178-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:102:13-37
+179            android:multiprocess="true"
+179-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:103:13-40
+180            android:theme="@style/android:Theme.Translucent.NoTitleBar.Fullscreen"
+180-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:104:13-83
+181            android:windowSoftInputMode="adjustResize|stateHidden" />
+181-->[:dirichlet_ad_4.2.8.0:] /Users/a1-6/.gradle/caches/transforms-3/02d899d6327d4850d7bfed7a3fec5b3e/transformed/jetified-dirichlet_ad_4.2.8.0/AndroidManifest.xml:105:13-67
+182
+183        <provider
+183-->[androidx.emoji2:emoji2:1.2.0] /Users/a1-6/.gradle/caches/transforms-3/ffc9f230be04c872a4d3d8344b79f804/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:24:9-32:20
+184            android:name="androidx.startup.InitializationProvider"
+184-->[androidx.emoji2:emoji2:1.2.0] /Users/a1-6/.gradle/caches/transforms-3/ffc9f230be04c872a4d3d8344b79f804/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:25:13-67
+185            android:authorities="com.starcore.merge.androidx-startup"
+185-->[androidx.emoji2:emoji2:1.2.0] /Users/a1-6/.gradle/caches/transforms-3/ffc9f230be04c872a4d3d8344b79f804/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:26:13-68
+186            android:exported="false" >
+186-->[androidx.emoji2:emoji2:1.2.0] /Users/a1-6/.gradle/caches/transforms-3/ffc9f230be04c872a4d3d8344b79f804/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:27:13-37
+187            <meta-data
+187-->[androidx.emoji2:emoji2:1.2.0] /Users/a1-6/.gradle/caches/transforms-3/ffc9f230be04c872a4d3d8344b79f804/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:29:13-31:52
+188                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+188-->[androidx.emoji2:emoji2:1.2.0] /Users/a1-6/.gradle/caches/transforms-3/ffc9f230be04c872a4d3d8344b79f804/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:30:17-75
+189                android:value="androidx.startup" />
+189-->[androidx.emoji2:emoji2:1.2.0] /Users/a1-6/.gradle/caches/transforms-3/ffc9f230be04c872a4d3d8344b79f804/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:31:17-49
+190            <meta-data
+190-->[androidx.lifecycle:lifecycle-process:2.4.1] /Users/a1-6/.gradle/caches/transforms-3/f7160d686e87b49efc26932fa8e94d5a/transformed/jetified-lifecycle-process-2.4.1/AndroidManifest.xml:31:13-33:52
+191                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+191-->[androidx.lifecycle:lifecycle-process:2.4.1] /Users/a1-6/.gradle/caches/transforms-3/f7160d686e87b49efc26932fa8e94d5a/transformed/jetified-lifecycle-process-2.4.1/AndroidManifest.xml:32:17-78
+192                android:value="androidx.startup" />
+192-->[androidx.lifecycle:lifecycle-process:2.4.1] /Users/a1-6/.gradle/caches/transforms-3/f7160d686e87b49efc26932fa8e94d5a/transformed/jetified-lifecycle-process-2.4.1/AndroidManifest.xml:33:17-49
+193        </provider>
+194
+195        <uses-library
+195-->[com.alipay.sdk:alipaysdk-android:15.8.17] /Users/a1-6/.gradle/caches/transforms-3/0635c7b8f6bf73c6d26805032815484d/transformed/jetified-alipaysdk-android-15.8.17/AndroidManifest.xml:34:9-36:40
+196            android:name="org.apache.http.legacy"
+196-->[com.alipay.sdk:alipaysdk-android:15.8.17] /Users/a1-6/.gradle/caches/transforms-3/0635c7b8f6bf73c6d26805032815484d/transformed/jetified-alipaysdk-android-15.8.17/AndroidManifest.xml:35:13-50
+197            android:required="false" />
+197-->[com.alipay.sdk:alipaysdk-android:15.8.17] /Users/a1-6/.gradle/caches/transforms-3/0635c7b8f6bf73c6d26805032815484d/transformed/jetified-alipaysdk-android-15.8.17/AndroidManifest.xml:36:13-37
+198
+199        <activity
+199-->[com.alipay.sdk:alipaysdk-android:15.8.17] /Users/a1-6/.gradle/caches/transforms-3/0635c7b8f6bf73c6d26805032815484d/transformed/jetified-alipaysdk-android-15.8.17/AndroidManifest.xml:38:9-43:20
+200            android:name="com.alipay.sdk.app.H5PayActivity"
+200-->[com.alipay.sdk:alipaysdk-android:15.8.17] /Users/a1-6/.gradle/caches/transforms-3/0635c7b8f6bf73c6d26805032815484d/transformed/jetified-alipaysdk-android-15.8.17/AndroidManifest.xml:39:13-60
+201            android:configChanges="orientation|keyboardHidden|navigation|screenSize|locale|keyboard|screenLayout|density|fontScale|layoutDirection|smallestScreenSize"
+201-->[com.alipay.sdk:alipaysdk-android:15.8.17] /Users/a1-6/.gradle/caches/transforms-3/0635c7b8f6bf73c6d26805032815484d/transformed/jetified-alipaysdk-android-15.8.17/AndroidManifest.xml:40:13-167
+202            android:exported="false"
+202-->[com.alipay.sdk:alipaysdk-android:15.8.17] /Users/a1-6/.gradle/caches/transforms-3/0635c7b8f6bf73c6d26805032815484d/transformed/jetified-alipaysdk-android-15.8.17/AndroidManifest.xml:41:13-37
+203            android:theme="@android:style/Theme.NoTitleBar" >
+203-->[com.alipay.sdk:alipaysdk-android:15.8.17] /Users/a1-6/.gradle/caches/transforms-3/0635c7b8f6bf73c6d26805032815484d/transformed/jetified-alipaysdk-android-15.8.17/AndroidManifest.xml:42:13-60
+204        </activity>
+205        <activity
+205-->[com.alipay.sdk:alipaysdk-android:15.8.17] /Users/a1-6/.gradle/caches/transforms-3/0635c7b8f6bf73c6d26805032815484d/transformed/jetified-alipaysdk-android-15.8.17/AndroidManifest.xml:44:9-49:20
+206            android:name="com.alipay.sdk.app.H5AuthActivity"
+206-->[com.alipay.sdk:alipaysdk-android:15.8.17] /Users/a1-6/.gradle/caches/transforms-3/0635c7b8f6bf73c6d26805032815484d/transformed/jetified-alipaysdk-android-15.8.17/AndroidManifest.xml:45:13-61
+207            android:configChanges="orientation|keyboardHidden|navigation|screenSize|locale|keyboard|screenLayout|density|fontScale|layoutDirection|smallestScreenSize"
+207-->[com.alipay.sdk:alipaysdk-android:15.8.17] /Users/a1-6/.gradle/caches/transforms-3/0635c7b8f6bf73c6d26805032815484d/transformed/jetified-alipaysdk-android-15.8.17/AndroidManifest.xml:46:13-167
+208            android:exported="false"
+208-->[com.alipay.sdk:alipaysdk-android:15.8.17] /Users/a1-6/.gradle/caches/transforms-3/0635c7b8f6bf73c6d26805032815484d/transformed/jetified-alipaysdk-android-15.8.17/AndroidManifest.xml:47:13-37
+209            android:theme="@android:style/Theme.NoTitleBar" >
+209-->[com.alipay.sdk:alipaysdk-android:15.8.17] /Users/a1-6/.gradle/caches/transforms-3/0635c7b8f6bf73c6d26805032815484d/transformed/jetified-alipaysdk-android-15.8.17/AndroidManifest.xml:48:13-60
+210        </activity>
+211        <activity
+211-->[com.alipay.sdk:alipaysdk-android:15.8.17] /Users/a1-6/.gradle/caches/transforms-3/0635c7b8f6bf73c6d26805032815484d/transformed/jetified-alipaysdk-android-15.8.17/AndroidManifest.xml:50:9-56:20
+212            android:name="com.alipay.sdk.app.PayResultActivity"
+212-->[com.alipay.sdk:alipaysdk-android:15.8.17] /Users/a1-6/.gradle/caches/transforms-3/0635c7b8f6bf73c6d26805032815484d/transformed/jetified-alipaysdk-android-15.8.17/AndroidManifest.xml:51:13-64
+213            android:configChanges="orientation|keyboardHidden|navigation|screenSize|locale|keyboard|screenLayout|density|fontScale|layoutDirection|smallestScreenSize"
+213-->[com.alipay.sdk:alipaysdk-android:15.8.17] /Users/a1-6/.gradle/caches/transforms-3/0635c7b8f6bf73c6d26805032815484d/transformed/jetified-alipaysdk-android-15.8.17/AndroidManifest.xml:52:13-167
+214            android:exported="true"
+214-->[com.alipay.sdk:alipaysdk-android:15.8.17] /Users/a1-6/.gradle/caches/transforms-3/0635c7b8f6bf73c6d26805032815484d/transformed/jetified-alipaysdk-android-15.8.17/AndroidManifest.xml:53:13-36
+215            android:launchMode="singleInstance"
+215-->[com.alipay.sdk:alipaysdk-android:15.8.17] /Users/a1-6/.gradle/caches/transforms-3/0635c7b8f6bf73c6d26805032815484d/transformed/jetified-alipaysdk-android-15.8.17/AndroidManifest.xml:54:13-48
+216            android:theme="@android:style/Theme.Translucent.NoTitleBar" >
+216-->[com.alipay.sdk:alipaysdk-android:15.8.17] /Users/a1-6/.gradle/caches/transforms-3/0635c7b8f6bf73c6d26805032815484d/transformed/jetified-alipaysdk-android-15.8.17/AndroidManifest.xml:55:13-72
+217        </activity>
+218        <activity
+218-->[com.alipay.sdk:alipaysdk-android:15.8.17] /Users/a1-6/.gradle/caches/transforms-3/0635c7b8f6bf73c6d26805032815484d/transformed/jetified-alipaysdk-android-15.8.17/AndroidManifest.xml:57:9-63:20
+219            android:name="com.alipay.sdk.app.AlipayResultActivity"
+219-->[com.alipay.sdk:alipaysdk-android:15.8.17] /Users/a1-6/.gradle/caches/transforms-3/0635c7b8f6bf73c6d26805032815484d/transformed/jetified-alipaysdk-android-15.8.17/AndroidManifest.xml:58:13-67
+220            android:configChanges="orientation|keyboardHidden|navigation|screenSize|locale|keyboard|screenLayout|density|fontScale|layoutDirection|smallestScreenSize"
+220-->[com.alipay.sdk:alipaysdk-android:15.8.17] /Users/a1-6/.gradle/caches/transforms-3/0635c7b8f6bf73c6d26805032815484d/transformed/jetified-alipaysdk-android-15.8.17/AndroidManifest.xml:59:13-167
+221            android:exported="true"
+221-->[com.alipay.sdk:alipaysdk-android:15.8.17] /Users/a1-6/.gradle/caches/transforms-3/0635c7b8f6bf73c6d26805032815484d/transformed/jetified-alipaysdk-android-15.8.17/AndroidManifest.xml:60:13-36
+222            android:launchMode="singleTask"
+222-->[com.alipay.sdk:alipaysdk-android:15.8.17] /Users/a1-6/.gradle/caches/transforms-3/0635c7b8f6bf73c6d26805032815484d/transformed/jetified-alipaysdk-android-15.8.17/AndroidManifest.xml:61:13-44
+223            android:theme="@android:style/Theme.Translucent.NoTitleBar" >
+223-->[com.alipay.sdk:alipaysdk-android:15.8.17] /Users/a1-6/.gradle/caches/transforms-3/0635c7b8f6bf73c6d26805032815484d/transformed/jetified-alipaysdk-android-15.8.17/AndroidManifest.xml:62:13-72
+224        </activity>
+225        <activity
+225-->[com.alipay.sdk:alipaysdk-android:15.8.17] /Users/a1-6/.gradle/caches/transforms-3/0635c7b8f6bf73c6d26805032815484d/transformed/jetified-alipaysdk-android-15.8.17/AndroidManifest.xml:64:9-70:20
+226            android:name="com.alipay.sdk.app.H5OpenAuthActivity"
+226-->[com.alipay.sdk:alipaysdk-android:15.8.17] /Users/a1-6/.gradle/caches/transforms-3/0635c7b8f6bf73c6d26805032815484d/transformed/jetified-alipaysdk-android-15.8.17/AndroidManifest.xml:65:13-65
+227            android:configChanges="orientation|keyboardHidden|navigation|screenSize|locale|keyboard|screenLayout|density|fontScale|layoutDirection|smallestScreenSize"
+227-->[com.alipay.sdk:alipaysdk-android:15.8.17] /Users/a1-6/.gradle/caches/transforms-3/0635c7b8f6bf73c6d26805032815484d/transformed/jetified-alipaysdk-android-15.8.17/AndroidManifest.xml:66:13-167
+228            android:exported="false"
+228-->[com.alipay.sdk:alipaysdk-android:15.8.17] /Users/a1-6/.gradle/caches/transforms-3/0635c7b8f6bf73c6d26805032815484d/transformed/jetified-alipaysdk-android-15.8.17/AndroidManifest.xml:67:13-37
+229            android:screenOrientation="behind"
+229-->[com.alipay.sdk:alipaysdk-android:15.8.17] /Users/a1-6/.gradle/caches/transforms-3/0635c7b8f6bf73c6d26805032815484d/transformed/jetified-alipaysdk-android-15.8.17/AndroidManifest.xml:68:13-47
+230            android:windowSoftInputMode="adjustResize|stateHidden" >
+230-->[com.alipay.sdk:alipaysdk-android:15.8.17] /Users/a1-6/.gradle/caches/transforms-3/0635c7b8f6bf73c6d26805032815484d/transformed/jetified-alipaysdk-android-15.8.17/AndroidManifest.xml:69:13-67
+231        </activity>
+232        <activity
+232-->[com.alipay.sdk:alipaysdk-android:15.8.17] /Users/a1-6/.gradle/caches/transforms-3/0635c7b8f6bf73c6d26805032815484d/transformed/jetified-alipaysdk-android-15.8.17/AndroidManifest.xml:71:9-76:20
+233            android:name="com.alipay.sdk.app.APayEntranceActivity"
+233-->[com.alipay.sdk:alipaysdk-android:15.8.17] /Users/a1-6/.gradle/caches/transforms-3/0635c7b8f6bf73c6d26805032815484d/transformed/jetified-alipaysdk-android-15.8.17/AndroidManifest.xml:72:13-67
+234            android:configChanges="orientation|keyboardHidden|navigation|screenSize|locale|keyboard|screenLayout|density|fontScale|layoutDirection|smallestScreenSize"
+234-->[com.alipay.sdk:alipaysdk-android:15.8.17] /Users/a1-6/.gradle/caches/transforms-3/0635c7b8f6bf73c6d26805032815484d/transformed/jetified-alipaysdk-android-15.8.17/AndroidManifest.xml:73:13-167
+235            android:exported="false"
+235-->[com.alipay.sdk:alipaysdk-android:15.8.17] /Users/a1-6/.gradle/caches/transforms-3/0635c7b8f6bf73c6d26805032815484d/transformed/jetified-alipaysdk-android-15.8.17/AndroidManifest.xml:74:13-37
+236            android:theme="@android:style/Theme.Translucent.NoTitleBar" >
+236-->[com.alipay.sdk:alipaysdk-android:15.8.17] /Users/a1-6/.gradle/caches/transforms-3/0635c7b8f6bf73c6d26805032815484d/transformed/jetified-alipaysdk-android-15.8.17/AndroidManifest.xml:75:13-72
+237        </activity>
+238    </application>
+239
+240</manifest>
