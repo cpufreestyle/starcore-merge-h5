@@ -19,6 +19,7 @@
 
   // === DOM ===
   const canvas = document.getElementById('board');
+  const boardWrap = document.getElementById('boardWrap');
   const ctx = canvas.getContext('2d');
   const $score = document.getElementById('score');
   const $best = document.getElementById('best');
@@ -260,9 +261,14 @@
 
   // ---------- 布局 ----------
   function resize() {
-    const rect = canvas.getBoundingClientRect();
-    boardPx = Math.min(rect.width, rect.height);
+    // 以 #boardWrap 的可用空间为基准，把棋盘设成能放进容器的最大正方形
+    const wrapW = boardWrap.clientWidth;
+    const wrapH = boardWrap.clientHeight;
+    const avail = Math.min(wrapW, wrapH);
+    boardPx = Math.max(120, Math.floor(avail * 0.98));
     dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, 3));
+    canvas.style.width = boardPx + 'px';
+    canvas.style.height = boardPx + 'px';
     canvas.width = Math.round(boardPx * dpr);
     canvas.height = Math.round(boardPx * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -1173,6 +1179,10 @@
   function bindEvents() {
     window.addEventListener('resize', resize);
     window.addEventListener('orientationchange', () => setTimeout(resize, 200));
+    window.addEventListener('load', resize);
+    if (typeof ResizeObserver !== 'undefined' && boardWrap) {
+      new ResizeObserver(resize).observe(boardWrap);
+    }
 
     // 横竖屏切换按钮：优先用 Orientation API 锁定，不支持则提示旋转设备
     const rotateBtn = document.getElementById('rotateBtn');
