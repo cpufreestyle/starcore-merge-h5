@@ -20,3 +20,6 @@ server/data/
 
 # å·¥å…·çŠ¶æ€
 .mimosa/
+
+# playwright-cli »á»°²úÎï
+.playwright-cli/
