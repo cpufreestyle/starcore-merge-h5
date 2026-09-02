@@ -1,0 +1,24 @@
+{
+  "name": "starcore-merge-h5",
+  "version": "1.4.0",
+  "description": "合成星核 H5 游戏 — 含真实广告与支付系统",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node server/index.js --dev",
+    "serve:h5": "npx http-server . -p 8080 -c-1 --cors",
+    "install:server": "npm install express cors better-sqlite3 axios uuid dotenv",
+    "init:db": "node server/db.js --init"
+  },
+  "dependencies": {
+    "axios": "^1.7.2",
+    "better-sqlite3": "^11.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "uuid": "^9.0.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

@@ -7,3 +7,16 @@ android/.gradle/
 android/app/build/
 .idea/
 *.tmp
+
+# 环境变量与密钥
+.env
+server/certs/
+
+# 运行时数据
+server/data/
+*.db
+*.db-wal
+*.db-shm
+
+# 工具状态
+.mimosa/

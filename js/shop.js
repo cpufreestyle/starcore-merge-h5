@@ -37,6 +37,15 @@
 
     if (isNative) {
       showNativeRewardAd();
+    } else if (window.StarAds && window.StarAds.showRewardAd(
+      grantAdReward,
+      function (completed) {
+        adWatching = false;
+        if (adCallback) { adCallback(completed); adCallback = null; }
+        if (!completed) toast('广告未完成，未获得奖励');
+      }
+    )) {
+      // 真实激励视频已发起（js/ads.js），结果由 StarAds 回调接管
     } else {
       showFallbackAd();
     }
