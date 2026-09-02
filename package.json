@@ -1,6 +1,6 @@
 {
   "name": "starcore-merge-h5",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "合成星核 H5 游戏 — 含真实广告与支付系统",
   "main": "server/index.js",
   "scripts": {

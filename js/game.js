@@ -262,8 +262,10 @@
   // ---------- 布局 ----------
   function resize() {
     // 以 #boardWrap 的可用空间为基准，把棋盘设成能放进容器的最大正方形
+    // 容器尚未完成布局（宽高为 0）时跳过，避免把棋盘尺寸钉死在 120px 最小值
     const wrapW = boardWrap.clientWidth;
     const wrapH = boardWrap.clientHeight;
+    if (wrapW <= 0 || wrapH <= 0) return;
     const avail = Math.min(wrapW, wrapH);
     boardPx = Math.max(120, Math.floor(avail * 0.98));
     dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, 3));
@@ -1167,12 +1169,37 @@
     return 'rgb(' + r + ',' + g + ',' + b + ')';
   }
 
+  // WebView 容器（TapTap 等）内存压力下可能丢失 2D 上下文，丢失期间所有绘制静默无效
+  let ctxLost = false;
+  let lastHealT = 0, lastWrapW = 0, lastWrapH = 0;
+  function selfHeal(now) {
+    if (now - lastHealT < 500) return;
+    lastHealT = now;
+    if (typeof ctx.isContextLost === 'function' && ctx.isContextLost()) return;
+    // 容器环境里布局可能迟于脚本初始化，或 canvas 属性被外部改写：定期校正
+    const w = boardWrap.clientWidth, h = boardWrap.clientHeight;
+    if (w > 0 && h > 0 && (w !== lastWrapW || h !== lastWrapH)) {
+      lastWrapW = w; lastWrapH = h;
+      resize();
+    } else if (boardPx > 0 && (canvas.width !== Math.round(boardPx * dpr) || canvas.height !== Math.round(boardPx * dpr))) {
+      resize();
+    }
+  }
+  let renderErrors = 0;
   function loop(t) {
+    // 先排程下一帧：渲染异常不应中断整个渲染循环（否则棋盘永久空白）
+    requestAnimationFrame(loop);
     const dt = Math.min(50, t - lastT || 16);
     lastT = t;
-    update(dt, t);
-    render(t);
-    requestAnimationFrame(loop);
+    if (!ctxLost) {
+      try {
+        update(dt, t);
+        render(t);
+      } catch (e) {
+        if (renderErrors < 3) { try { console.error('[SC] 渲染异常:', e); } catch (_) {} renderErrors++; }
+      }
+    }
+    selfHeal(t);
   }
 
   // ---------- 事件 ----------
@@ -1183,6 +1210,13 @@
     if (typeof ResizeObserver !== 'undefined' && boardWrap) {
       new ResizeObserver(resize).observe(boardWrap);
     }
+    // 2D 上下文丢失/恢复：恢复后重建尺寸与变换
+    canvas.addEventListener('contextlost', () => { ctxLost = true; });
+    canvas.addEventListener('contextrestored', () => { ctxLost = false; resize(); });
+    // 容器切后台/回前台：rAF 停走，回来后校正时间基准与布局
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) { lastT = performance.now(); resize(); }
+    });
 
     // 横竖屏切换按钮：优先用 Orientation API 锁定，不支持则提示旋转设备
     const rotateBtn = document.getElementById('rotateBtn');
@@ -1320,6 +1354,8 @@
     try { puzzleLevel = parseInt(localStorage.getItem('starcore_puzzle_v1') || '0', 10) || 0; } catch (e) { puzzleLevel = 0; }
     loadAchievements();
     bindEvents();
+    // 容器环境（iframe/webview）布局可能迟于 DOMContentLoaded：延迟补几次尺寸校正
+    [200, 600, 1500].forEach((ms) => setTimeout(resize, ms));
     // 初始化付费系统
     if (window.StarCoreShop) window.StarCoreShop.init();
     updateHud();
