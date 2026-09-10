@@ -37,6 +37,15 @@
 
     if (isNative) {
       showNativeRewardAd();
+    } else if (window.StarAds && window.StarAds.showRewardAd(
+      grantAdReward,
+      function (completed) {
+        adWatching = false;
+        if (adCallback) { adCallback(completed); adCallback = null; }
+        if (!completed) toast('广告未完成，未获得奖励');
+      }
+    )) {
+      // 真实激励视频已发起（js/ads.js），结果由 StarAds 回调接管
     } else {
       showFallbackAd();
     }
@@ -204,6 +213,41 @@
     try { coins = parseInt(localStorage.getItem('starcore_coins') || '0', 10) || 0; } catch (e) { coins = 0; }
     syncCoinsFromServer();
     updateCoinDisplay();
+  }
+
+  // === 离线收益：关闭页面期间星核持续产出，回来自动结算 ===
+  const OFFLINE_RATE = 6;     // 每小时产出 6 星核币
+  const OFFLINE_CAP_H = 12;   // 最多累计 12 小时（上限 72 💎）
+  const OFFLINE_MIN_S = 60;   // 不足 60 秒不结算
+  const SEEN_KEY = 'starcore_last_seen';
+
+  function markSeen() {
+    try { localStorage.setItem(SEEN_KEY, String(Date.now())); } catch (e) {}
+  }
+
+  function claimOfflineEarnings() {
+    const now = Date.now();
+    let last = 0;
+    try { last = parseInt(localStorage.getItem(SEEN_KEY) || '0', 10) || 0; } catch (e) {}
+    markSeen();
+    if (!last) return;                       // 首次进入不发放
+    const sec = Math.floor((now - last) / 1000);
+    if (sec < OFFLINE_MIN_S) return;
+    const hours = Math.min(OFFLINE_CAP_H, sec / 3600);
+    const gain = Math.floor(hours * OFFLINE_RATE);
+    if (gain <= 0) return;
+    coins += gain;
+    saveCoins();
+    const h = Math.floor(sec / 3600), m = Math.floor((sec % 3600) / 60);
+    const dur = h > 0 ? h + ' 小时 ' + m + ' 分钟' : m + ' 分钟';
+    const capped = sec / 3600 >= OFFLINE_CAP_H ? '（已达上限）' : '';
+    toast('🌙 离线 ' + dur + capped + '，星核自动产出 +' + gain + ' 💎');
+  }
+
+  function startSeenHeartbeat() {
+    setInterval(markSeen, 30000);            // 每 30 秒刷新"最后在线"
+    document.addEventListener('visibilitychange', function () { if (document.hidden) markSeen(); });
+    window.addEventListener('pagehide', markSeen);
   }
   function saveCoins() {
     try { localStorage.setItem('starcore_coins', String(coins)); } catch (e) {}
@@ -750,6 +794,8 @@
       loadCoins();
       loadPass();
       loadSkins();
+      claimOfflineEarnings();
+      startSeenHeartbeat();
 
       const shopBtn = document.getElementById('shopBtn');
       if (shopBtn) shopBtn.addEventListener('click', () => {

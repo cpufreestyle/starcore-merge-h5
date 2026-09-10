@@ -377,6 +377,75 @@ html, body {
   pointer-events: none;
 }
 
+/* === 连击计时条（每帧更新，故不加 transition）=== */
+.combo-bar {
+  position: relative;
+  width: 80%;
+  max-width: 360px;
+  height: 18px;
+  margin: 4px auto 0;
+  border-radius: 9px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  overflow: hidden;
+}
+.combo-bar.hidden { display: none; }
+.combo-fill {
+  height: 100%;
+  width: 0%;
+  border-radius: 9px;
+  background: linear-gradient(90deg, #ff9d2e, #ff6b6b, #feca57);
+  box-shadow: 0 0 10px rgba(255,107,107,0.5);
+}
+.combo-label {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 11px;
+  font-weight: 800;
+  color: #fff;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.7);
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+/* === 生涯统计 === */
+.career-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin: 8px 0 14px;
+}
+.career-item {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 10px;
+  padding: 10px 4px;
+  text-align: center;
+}
+.career-emoji { font-size: 18px; display: block; }
+.career-num {
+  font-size: 16px;
+  font-weight: 800;
+  margin-top: 2px;
+  color: var(--accent, #38e1ff);
+}
+.career-name { font-size: 11px; opacity: 0.75; margin-top: 1px; }
+
+/* === 新手引导 === */
+.tut-steps { text-align: left; margin: 6px 0 14px; }
+.tut-step {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  margin-bottom: 10px;
+  font-size: 13px;
+  line-height: 1.5;
+  opacity: 0.95;
+}
+.tut-emoji { font-size: 20px; line-height: 1.2; flex: 0 0 auto; }
+
 /* === 连击风暴 === */
 .combo-banner {
   position: fixed;

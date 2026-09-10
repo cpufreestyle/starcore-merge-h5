@@ -21,5 +21,14 @@ server/data/
 # 工具状态
 .mimosa/
 
-# playwright-cli �Ự����
+# playwright-cli �Ự����
 .playwright-cli/
+
+# 构建产物（早期方案的 terser 压缩输出，现统一使用源码引用，勿纳入版本控制）
+js/*.min.js
+
+# 备份产物（补丁 / bundle，仅本地容灾用，不入库）
+patches/
+
+# 本地 IDE / 工作记忆数据（不入库）
+.codebuddy/

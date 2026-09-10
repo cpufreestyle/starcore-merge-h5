@@ -12,10 +12,14 @@
   const COMBO_GRACE = 1500;      // 连击宽容期 1.5s
   const ENERGY_MAX = 20;         // 能量条上限
 
-  const COLORS = {
+  // 核心配色：默认主题，可被 index.html 中的 window.STARCORE_THEME.colors 覆盖
+  const COLORS = Object.assign({
     1: '#5b8def', 2: '#4fd1c5', 3: '#68d391', 4: '#f6e05e',
     5: '#f6ad55', 6: '#fc8181', 7: '#b794f4', 8: '#f687b3'
-  };
+  }, (window.STARCORE_THEME && window.STARCORE_THEME.colors) || {});
+  // 预计算高光色，避免每帧对每个核心重复解析十六进制串
+  const LIGHTEN_COLORS = {};
+  for (let lv = 1; lv <= 8; lv++) LIGHTEN_COLORS[lv] = lighten(COLORS[lv] || '#888', 0.35);
 
   // === DOM ===
   const canvas = document.getElementById('board');
@@ -46,6 +50,25 @@
   const $puzzleGoal = document.getElementById('puzzleGoal');
   const $dailyOverlay = document.getElementById('dailyOverlay');
 
+  // 常用 DOM 引用缓存，避免热路径中反复 getElementById
+  const $app = document.getElementById('app');
+  const $comboBanner = document.getElementById('comboBanner');
+  const $energyFill = document.getElementById('energyFill');
+  const $energyLabel = document.getElementById('energyLabel');
+  const $comboBar = document.getElementById('comboBar');
+  const $comboFill = document.getElementById('comboFill');
+  const $comboLabel = document.getElementById('comboLabel');
+  const $tutorialOverlay = document.getElementById('tutorialOverlay');
+  const $careerOverlay = document.getElementById('careerOverlay');
+  const $careerGrid = document.getElementById('careerGrid');
+  const TOOL_KEYS = ['lightning', 'shuffle', 'hint', 'bomb'];
+  const $toolCount = {};
+  const $toolBtn = {};
+  TOOL_KEYS.forEach(function (t) {
+    $toolCount[t] = document.getElementById(t + 'Count');
+    $toolBtn[t] = document.getElementById('tool' + t.charAt(0).toUpperCase() + t.slice(1));
+  });
+
   // === 状态 ===
   let cores = Array.from({ length: GRID }, () => Array(GRID).fill(null));
   let selected = null;
@@ -56,6 +79,7 @@
   let comboTimer = 0;            // 连击宽容计时
   let energy = 0;               // 能量条
   let shieldUsed = false;       // 护盾是否已用
+  let isDaily = false;          // 本次对局是否为每日挑战（每日按天结算，不支持续玩）
   let elapsed = 0;
   let lastT = 0;
   let dpr = 1, boardPx = 0, pad = 0, gap = 0, cell = 0;
@@ -181,21 +205,19 @@
     stormActive = true;
     stormEndT = performance.now() + 4000; // 4秒
     stats.storms++;
-    const banner = document.getElementById('comboBanner');
-    banner.textContent = '🌪️ 连击风暴 x' + combo + '!';
-    banner.classList.remove('show');
-    void banner.offsetWidth; // reflow
-    banner.classList.add('show');
-    const app = document.getElementById('app');
-    app.classList.remove('storm');
-    void app.offsetWidth;
-    app.classList.add('storm');
+    $comboBanner.textContent = '🌪️ 连击风暴 x' + combo + '!';
+    $comboBanner.classList.remove('show');
+    void $comboBanner.offsetWidth; // reflow
+    $comboBanner.classList.add('show');
+    $app.classList.remove('storm');
+    void $app.offsetWidth;
+    $app.classList.add('storm');
     haptic([40, 80, 40, 80, 40]);
     SFX.boom();
     checkAchievements();
     setTimeout(() => {
       stormActive = false;
-      app.classList.remove('storm');
+      $app.classList.remove('storm');
     }, 4000);
   }
 
@@ -220,11 +242,10 @@
     score += bonus;
     stats.score = score;
     // 全屏闪光
-    const app = document.getElementById('app');
-    app.classList.remove('storm');
-    void app.offsetWidth;
-    app.classList.add('storm');
-    setTimeout(() => app.classList.remove('storm'), 600);
+    $app.classList.remove('storm');
+    void $app.offsetWidth;
+    $app.classList.add('storm');
+    setTimeout(() => $app.classList.remove('storm'), 600);
     // 中心冲击波
     const cc = cellRect(2, 2);
     shockwaves.push({ x: cc.cx, y: cc.cy, r: 0, maxR: cell * 5, born: performance.now() });
@@ -277,29 +298,52 @@
     pad = boardPx * 0.045;
     gap = boardPx * 0.025;
     cell = (boardPx - pad * 2 - gap * (GRID - 1)) / GRID;
+    buildNebulaSprites();
+  }
+
+  // 预渲染星云精灵（一次性径向渐变），每帧仅 drawImage 到位，避免每帧 createRadialGradient
+  let nebulaSprites = [];
+  const NEBULA_COLORS = ['rgba(91,141,239,0.04)', 'rgba(79,209,197,0.035)', 'rgba(183,148,244,0.03)'];
+  function buildNebulaSprites() {
+    if (!boardPx) return;
+    nebulaSprites = NEBULA_COLORS.map(function (c) {
+      const cv = document.createElement('canvas');
+      cv.width = boardPx; cv.height = boardPx;
+      const nctx = cv.getContext('2d');
+      const grad = nctx.createRadialGradient(boardPx / 2, boardPx / 2, 0, boardPx / 2, boardPx / 2, boardPx / 2);
+      grad.addColorStop(0, c);
+      grad.addColorStop(1, 'transparent');
+      nctx.fillStyle = grad;
+      nctx.fillRect(0, 0, boardPx, boardPx);
+      return cv;
+    });
   }
   function cellRect(r, c) {
     const x = pad + c * (cell + gap);
     const y = pad + r * (cell + gap);
     return { x, y, cx: x + cell / 2, cy: y + cell / 2 };
   }
+  // 数学直接定位：原先每次点击要遍历 25 格并各分配一个 rect 对象，现改为 O(1)
   function cellAt(px, py) {
-    for (let r = 0; r < GRID; r++) for (let c = 0; c < GRID; c++) {
-      const rc = cellRect(r, c);
-      if (px >= rc.x && px <= rc.x + cell && py >= rc.y && py <= rc.y + cell) return { r, c };
-    }
-    return null;
+    const stride = cell + gap;
+    const c = Math.floor((px - pad) / stride);
+    const r = Math.floor((py - pad) / stride);
+    if (!inBounds(r, c)) return null;
+    if (px > pad + c * stride + cell || py > pad + r * stride + cell) return null; // 落在格间缝隙
+    return { r, c };
   }
 
   // ---------- 棋盘逻辑 ----------
   function newGame(m) {
     mode = m;
+    isDaily = (m === 'daily');
     cores = Array.from({ length: GRID }, () => Array(GRID).fill(null));
     selected = null; score = 0; combo = 0; maxCombo = 0; comboTimer = 0; energy = 0; shieldUsed = false;
     elapsed = 0; anims = []; particles = []; floats = [];
     running = true; paused = false; gameOver = false; inputLocked = false;
     activeTool = null;
     tools = { lightning: 3, shuffle: 2, hint: 4, bomb: 2 };  // 道具增加
+    window.StarCoreTools = tools; // 新对象需重新暴露，否则商店/广告发放的道具写到旧引用
     if (window.StarCoreShop) window.StarCoreShop.resetRevive();
     const prevDaily = stats ? (stats.dailyDone || 0) : 0;
     stats = { totalMerges: 0, maxCombo: 0, booms: 0, score: 0, maxLevel: 0, puzzleCleared: stats.puzzleCleared || 0, toolsUsedAll: false, toolsUsed: {}, storms: 0, rainbows: 0, dailyDone: prevDaily, awakens: 0, shields: 0, resonances: 0, maxResonance: 0 };
@@ -334,6 +378,7 @@
       $puzzleGoal.textContent = '剩余步数: ' + puzzleMoves;
       $puzzleInfo.classList.remove('hidden');
       $menu.classList.add('hidden');
+      running = false;   // 关卡信息展示阶段尚未开局，避免存下空棋盘
       return; // 等待玩家点击开始
     }
 
@@ -347,6 +392,7 @@
     $hint.textContent = mode === 'timed'
       ? '60 秒内尽可能拿高分，连击越多分越高！'
       : '点击相邻同色核心合并，凑出两个 7 引爆星核！';
+    saveGame();
   }
 
   function startPuzzle() {
@@ -361,6 +407,7 @@
     updateToolHud();
     const pz = PUZZLE_LEVELS[puzzleLevel];
     $hint.textContent = pz.desc + '（剩余 ' + puzzleMoves + ' 步）';
+    saveGame();
   }
 
   function spawnInitial() {
@@ -433,6 +480,7 @@
     spawn(1);
     ensurePlayable();
     checkEnd();
+    saveGame();
   }
 
   function useBomb(target) {
@@ -460,6 +508,7 @@
     spawn(2);
     ensurePlayable();
     checkEnd();
+    saveGame();
   }
 
   function useShuffle() {
@@ -492,6 +541,7 @@
     updateToolHud();
     ensurePlayable();
     checkEnd();
+    saveGame();
   }
 
   function useHint() {
@@ -513,6 +563,7 @@
     }
     checkToolsAchievement();
     updateToolHud();
+    saveGame();
   }
 
   function checkToolsAchievement() {
@@ -523,18 +574,18 @@
   }
 
   function updateToolHud() {
-    document.getElementById('lightningCount').textContent = tools.lightning;
-    document.getElementById('shuffleCount').textContent = tools.shuffle;
-    document.getElementById('hintCount').textContent = tools.hint;
-    document.getElementById('bombCount').textContent = tools.bomb;
+    if ($toolCount.lightning) $toolCount.lightning.textContent = tools.lightning;
+    if ($toolCount.shuffle) $toolCount.shuffle.textContent = tools.shuffle;
+    if ($toolCount.hint) $toolCount.hint.textContent = tools.hint;
+    if ($toolCount.bomb) $toolCount.bomb.textContent = tools.bomb;
 
-    ['lightning', 'shuffle', 'hint', 'bomb'].forEach(t => {
-      const btn = document.getElementById('tool' + t.charAt(0).toUpperCase() + t.slice(1));
+    for (const t of TOOL_KEYS) {
+      const btn = $toolBtn[t];
       if (btn) {
         btn.classList.toggle('disabled', tools[t] <= 0);
         btn.classList.toggle('active', activeTool === t);
       }
-    });
+    }
   }
 
   // ---------- 成就 ----------
@@ -684,8 +735,8 @@
     const toCore = cores[to.r][to.c];
     const peakBefore = maxLevelOnBoard(); // 合并前棋盘峰值（用于判定“新峰值→共鸣”）
     // 彩虹核心：取另一方等级，不+1
-    const L = fromCore.rainbow ? toCore.level : (toCore.rainbow ? fromCore.level : fromCore.level);
-    const newLevel = fromCore.rainbow || toCore.rainbow ? L + 1 : L + 1;
+    const L = fromCore.rainbow ? toCore.level : fromCore.level;
+    const newLevel = L + 1;
     cores[from.r][from.c] = null;
     selected = null;
     combo++;
@@ -786,6 +837,7 @@
     updateHud();
     checkAchievements();
     checkEnd();
+    saveGame();
   }
 
   function checkPuzzleGoal() {
@@ -802,6 +854,8 @@
       haptic([50, 100, 50]);
       puzzleLevel++;
       stats.puzzleCleared = puzzleLevel;
+      try { localStorage.setItem('starcore_puzzle_v1', String(puzzleLevel)); } catch (e) {} // 持久化解谜进度
+      clearSave();                                                                          // 本关已通过，续玩存档作废
       checkAchievements();
       setTimeout(() => {
         running = false; gameOver = true;
@@ -863,8 +917,10 @@
   }
   function endGame(title) {
     running = false; gameOver = true; selected = null; inputLocked = false;
+    clearSave(); // 对局结束，存档作废
     if (score > best) { best = score; try { localStorage.setItem('starcore_best_v1', String(best)); } catch (e) {} }
     addToBoard(score, mode);
+    accumulateCareer();
     $overTitle.textContent = title || '游戏结束';
     $finalScore.textContent = score;
     $finalBest.textContent = best;
@@ -879,6 +935,186 @@
     $hint.textContent = '点击「再来一局」继续挑战';
     checkAchievements();
     SFX.over();
+  }
+
+  // ---------- 对局存档（刷新/误关后可续玩）----------
+  const SAVE_KEY = 'starcore_save_v1';
+
+  function saveNow() {
+    try {
+      if (!running || gameOver) return;   // 仅保存进行中的对局
+      if (isDaily) return;                // 每日挑战按天结算，不支持续玩
+      if (!cores.some(row => row.some(c => c))) return; // 空棋盘（尚未开局）不保存
+      localStorage.setItem(SAVE_KEY, JSON.stringify({
+        v: 1,
+        mode: mode,
+        cores: cores.map(row => row.map(c => c ? { level: c.level, rainbow: !!c.rainbow } : null)),
+        score: score, maxCombo: maxCombo, energy: energy,
+        shieldUsed: shieldUsed, elapsed: elapsed,
+        tools: Object.assign({}, tools),
+        puzzleLevel: puzzleLevel, puzzleMoves: puzzleMoves,
+        ts: Date.now(),
+      }));
+    } catch (e) {}
+  }
+
+  // 节流：连击时合并/道具会在极短时间内多次触发，而 localStorage 是同步 IO，
+  // 每次都全量序列化 + 落盘会造成可感知卡顿。500ms 窗口内合并为一次写入。
+  // 页面隐藏/关闭时由 setupAutoSave 直接调用 saveNow()，保证进度不丢。
+  let saveThrottleId = null, saveDirty = false;
+  function saveGame() {
+    if (saveThrottleId) { saveDirty = true; return; }
+    saveNow();
+    saveThrottleId = setTimeout(function () {
+      saveThrottleId = null;
+      if (saveDirty) { saveDirty = false; saveNow(); }
+    }, 500);
+  }
+
+  function loadSave() {
+    try {
+      const d = JSON.parse(localStorage.getItem(SAVE_KEY) || 'null');
+      if (!d || d.v !== 1 || !Array.isArray(d.cores) || d.cores.length !== GRID) return null;
+      for (const row of d.cores) if (!Array.isArray(row) || row.length !== GRID) return null;
+      if (d.mode !== 'classic' && d.mode !== 'timed' && d.mode !== 'puzzle') return null;
+      return d;
+    } catch (e) { return null; }
+  }
+
+  function clearSave() {
+    try { localStorage.removeItem(SAVE_KEY); } catch (e) {}
+  }
+
+  function restoreGame(d) {
+    mode = d.mode;
+    const t = performance.now();
+    cores = d.cores.map(row => row.map(c => c ? { level: c.level, rainbow: !!c.rainbow, born: t, pop: 0 } : null));
+    score = d.score || 0;
+    combo = 0;                        // 连击不跨会话延续
+    maxCombo = d.maxCombo || 0;
+    energy = d.energy || 0;
+    shieldUsed = !!d.shieldUsed;
+    elapsed = d.elapsed || 0;
+    tools = Object.assign({ lightning: 0, shuffle: 0, hint: 0, bomb: 0 }, d.tools || {});
+    window.StarCoreTools = tools;
+    puzzleLevel = d.puzzleLevel || 0;
+    puzzleMoves = d.puzzleMoves || 0;
+    selected = null; activeTool = null;
+    anims = []; particles = []; floats = [];
+    running = true; paused = false; gameOver = false; inputLocked = false;
+    if (window.StarCoreShop) window.StarCoreShop.resetRevive();
+    $menu.classList.add('hidden');
+    $pause.classList.add('hidden');
+    $over.classList.add('hidden');
+    $puzzleInfo.classList.add('hidden');
+    updateHud();
+    updateToolHud();
+    if (mode === 'puzzle') {
+      const pz = PUZZLE_LEVELS[puzzleLevel];
+      $puzzleGoal.textContent = '剩余步数: ' + puzzleMoves;
+      $hint.textContent = (pz ? pz.desc : '') + '（剩余 ' + puzzleMoves + ' 步）';
+    } else {
+      $hint.textContent = mode === 'timed'
+        ? '60 秒内尽可能拿高分，连击越多分越高！'
+        : '点击相邻同色核心合并，凑出两个 7 引爆星核！';
+    }
+    toast('▶️ 已恢复上次对局');
+  }
+
+  // 菜单中动态插入「继续上局」按钮（仅当存在未结束对局）
+  function setupResumeButton() {
+    const saved = loadSave();
+    if (!saved || !$menu) return;
+    const panel = $menu.querySelector('.panel');
+    if (!panel) return;
+    const label = saved.mode === 'timed' ? '计时挑战' : saved.mode === 'puzzle' ? '解谜模式' : '无尽模式';
+    const btn = document.createElement('button');
+    btn.className = 'btn primary';
+    btn.textContent = '▶️ 继续上局（' + label + ' ' + saved.score + ' 分）';
+    btn.addEventListener('click', function () {
+      const d = loadSave();
+      if (!d) { btn.remove(); return; }
+      restoreGame(d);
+      btn.remove();
+    });
+    const first = panel.querySelector('.btn[data-mode]');
+    if (first) panel.insertBefore(btn, first);
+    else panel.appendChild(btn);
+  }
+
+  // 页面隐藏/关闭前兜底保存，避免最后一步操作丢失
+  function setupAutoSave() {
+    // 这里必须用 saveNow（跳过节流），否则切后台/关闭时可能丢掉窗口内的最后一次状态
+    document.addEventListener('visibilitychange', function () { if (document.hidden) saveNow(); });
+    window.addEventListener('pagehide', saveNow);
+    window.addEventListener('beforeunload', saveNow);
+  }
+
+  // ---------- 生涯统计（跨局累计）----------
+  const CAREER_KEY = 'starcore_career_v1';
+  let career = {
+    games: 0, totalScore: 0, best: 0, merges: 0, booms: 0,
+    maxCombo: 0, rainbows: 0, storms: 0, awakens: 0,
+  };
+
+  function loadCareer() {
+    try {
+      const d = JSON.parse(localStorage.getItem(CAREER_KEY) || 'null');
+      if (d && typeof d === 'object') career = Object.assign(career, d);
+    } catch (e) {}
+  }
+  function saveCareer() {
+    try { localStorage.setItem(CAREER_KEY, JSON.stringify(career)); } catch (e) {}
+  }
+  function accumulateCareer() {
+    career.games += 1;
+    career.totalScore += score;
+    career.merges += stats.totalMerges || 0;
+    career.booms += stats.booms || 0;
+    career.rainbows += stats.rainbows || 0;
+    career.storms += stats.storms || 0;
+    career.awakens += stats.awakens || 0;
+    if ((stats.maxCombo || 0) > career.maxCombo) career.maxCombo = stats.maxCombo;
+    if (score > career.best) career.best = score;
+    saveCareer();
+  }
+  function showCareer() {
+    if (!$careerGrid || !$careerOverlay) return;
+    const avg = career.games ? Math.round(career.totalScore / career.games) : 0;
+    const items = [
+      ['🎮', '总局数', career.games],
+      ['🏅', '累计得分', career.totalScore],
+      ['👑', '历史最高', career.best],
+      ['📈', '场均得分', avg],
+      ['🔗', '累计合成', career.merges],
+      ['💥', '累计爆发', career.booms],
+      ['⚡', '最高连击', career.maxCombo],
+      ['🌈', '彩虹核心', career.rainbows],
+      ['🌪️', '连击风暴', career.storms],
+      ['🌟', '星核觉醒', career.awakens],
+    ];
+    $careerGrid.innerHTML = items.map(function (it) {
+      return '<div class="career-item">' +
+        '<span class="career-emoji">' + it[0] + '</span>' +
+        '<div class="career-num">' + it[2] + '</div>' +
+        '<div class="career-name">' + it[1] + '</div>' +
+        '</div>';
+    }).join('');
+    $careerOverlay.classList.remove('hidden');
+  }
+
+  // 首次进入显示新手引导，之后不再打扰
+  function maybeShowTutorial() {
+    if (!$tutorialOverlay) return;
+    let seen = false;
+    try { seen = localStorage.getItem('starcore_tutorial_v1') === '1'; } catch (e) {}
+    if (seen) return;
+    $tutorialOverlay.classList.remove('hidden');
+    const btn = document.getElementById('tutorialStartBtn');
+    if (btn) btn.addEventListener('click', function () {
+      try { localStorage.setItem('starcore_tutorial_v1', '1'); } catch (e) {}
+      $tutorialOverlay.classList.add('hidden');
+    });
   }
 
   // ---------- 排行榜 / 分享 ----------
@@ -931,27 +1167,42 @@
     for (let r = 0; r < GRID; r++) for (let c = 0; c < GRID; c++) if (cores[r][c]) m = Math.max(m, cores[r][c].level);
     return m;
   }
+  // HUD 脏检查：值未变化就不写 DOM，避免无谓的样式重算
+  const hudPrev = { score: null, best: null, mode: null, modeVal: null, energy: null };
   function updateHud() {
-    $score.textContent = score;
-    $best.textContent = best;
-    $modeLabel.textContent = mode === 'timed' ? '计时' : mode === 'puzzle' ? '解谜' : '无尽';
-    if (mode === 'timed') {
-      const left = Math.max(0, Math.ceil(TIMED_SECONDS - elapsed / 1000));
-      $modeVal.textContent = left + 's';
-    } else if (mode === 'puzzle') {
-      $modeVal.textContent = puzzleMoves + '步';
-    } else {
-      $modeVal.textContent = 'Lv ' + maxLevelOnBoard();
-    }
+    if (hudPrev.score !== score) { hudPrev.score = score; $score.textContent = score; }
+    if (hudPrev.best !== best) { hudPrev.best = best; $best.textContent = best; }
+    const ml = mode === 'timed' ? '计时' : mode === 'puzzle' ? '解谜' : '无尽';
+    if (hudPrev.mode !== ml) { hudPrev.mode = ml; $modeLabel.textContent = ml; }
+    let mv;
+    if (mode === 'timed') mv = Math.max(0, Math.ceil(TIMED_SECONDS - elapsed / 1000)) + 's';
+    else if (mode === 'puzzle') mv = puzzleMoves + '步';
+    else mv = 'Lv ' + maxLevelOnBoard();
+    if (hudPrev.modeVal !== mv) { hudPrev.modeVal = mv; $modeVal.textContent = mv; }
     // 能量条
-    const pct = (energy / ENERGY_MAX) * 100;
-    const fill = document.getElementById('energyFill');
-    const lbl = document.getElementById('energyLabel');
-    if (fill) {
-      fill.style.width = pct + '%';
-      fill.classList.toggle('full', energy >= ENERGY_MAX);
+    if (hudPrev.energy !== energy) {
+      hudPrev.energy = energy;
+      const pct = (energy / ENERGY_MAX) * 100;
+      if ($energyFill) {
+        $energyFill.style.width = pct + '%';
+        $energyFill.classList.toggle('full', energy >= ENERGY_MAX);
+      }
+      if ($energyLabel) $energyLabel.textContent = '能量 ' + energy + '/' + ENERGY_MAX;
     }
-    if (lbl) lbl.textContent = '能量 ' + energy + '/' + ENERGY_MAX;
+  }
+
+  // 连击计时条：把原本不可见的 1.5s 宽容期可视化
+  let lastComboLabel = '';
+  function updateComboBar() {
+    if (!running || gameOver || combo <= 0) {
+      if ($comboBar && !$comboBar.classList.contains('hidden')) $comboBar.classList.add('hidden');
+      return;
+    }
+    const pct = Math.max(0, Math.min(100, (comboTimer / COMBO_GRACE) * 100));
+    $comboBar.classList.remove('hidden');
+    $comboFill.style.width = pct + '%';
+    const txt = '连击 x' + combo + (combo >= STORM_THRESHOLD ? ' 🌪️' : '');
+    if (txt !== lastComboLabel) { $comboLabel.textContent = txt; lastComboLabel = txt; }
   }
 
   // ---------- 更新与渲染 ----------
@@ -986,6 +1237,7 @@
     particles = particles.filter(p => p.life > 0);
     floats = floats.filter(f => now - f.born < 900);
     shockwaves = shockwaves.filter(s => now - s.born < 500);
+    updateComboBar();
   }
 
   function render(now) {
@@ -1068,18 +1320,14 @@
   }
 
   function drawBackground(now) {
-    // 动态星云
+    // 动态星云：用预渲染精灵 drawImage 到位（每帧比重建径向渐变便宜得多）
     const t = nebulaT;
     for (let i = 0; i < 3; i++) {
       const cx = boardPx * (0.3 + 0.4 * Math.sin(t * 0.15 + i * 2.1));
       const cy = boardPx * (0.3 + 0.4 * Math.cos(t * 0.12 + i * 2.1));
-      const r = Math.max(0, boardPx * (0.3 + 0.1 * Math.sin(t * 0.2 + i)));
-      const colors = ['rgba(91,141,239,0.04)', 'rgba(79,209,197,0.035)', 'rgba(183,148,244,0.03)'];
-      const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
-      grad.addColorStop(0, colors[i]);
-      grad.addColorStop(1, 'transparent');
-      ctx.fillStyle = grad;
-      ctx.fillRect(0, 0, boardPx, boardPx);
+      const r = Math.max(1, boardPx * (0.3 + 0.1 * Math.sin(t * 0.2 + i)));
+      const sp = nebulaSprites[i];
+      if (sp) ctx.drawImage(sp, cx - r, cy - r, r * 2, r * 2);
     }
 
     // 背景星星
@@ -1122,7 +1370,7 @@
       ctx.stroke();
     } else {
       const grad = ctx.createRadialGradient(cx - size * 0.18, cy - size * 0.18, Math.max(0, size * 0.1), cx, cy, Math.max(0, size * 0.75));
-      grad.addColorStop(0, lighten(color, 0.35));
+      grad.addColorStop(0, LIGHTEN_COLORS[level] || lighten(color, 0.35));
       grad.addColorStop(1, color);
       ctx.fillStyle = grad;
       ctx.fill();
@@ -1189,6 +1437,8 @@
   function loop(t) {
     // 先排程下一帧：渲染异常不应中断整个渲染循环（否则棋盘永久空白）
     requestAnimationFrame(loop);
+    // 后台标签页不渲染，省电省 CPU；重置时间基准避免回前台时 dt 突跳
+    if (document.hidden) { lastT = t; return; }
     const dt = Math.min(50, t - lastT || 16);
     lastT = t;
     if (!ctxLost) {
@@ -1321,6 +1571,10 @@
     document.getElementById('shareBtn').addEventListener('click', shareScore);
     document.getElementById('achBtn').addEventListener('click', showAchWall);
     document.getElementById('achCloseBtn').addEventListener('click', () => $achOverlay.classList.add('hidden'));
+    const careerBtn = document.getElementById('careerBtn');
+    if (careerBtn) careerBtn.addEventListener('click', showCareer);
+    const careerCloseBtn = document.getElementById('careerCloseBtn');
+    if (careerCloseBtn) careerCloseBtn.addEventListener('click', () => $careerOverlay.classList.add('hidden'));
 
     // 续命按钮
     document.getElementById('reviveBtn').addEventListener('click', () => {
@@ -1353,7 +1607,11 @@
     try { best = parseInt(localStorage.getItem('starcore_best_v1') || '0', 10) || 0; } catch (e) { best = 0; }
     try { puzzleLevel = parseInt(localStorage.getItem('starcore_puzzle_v1') || '0', 10) || 0; } catch (e) { puzzleLevel = 0; }
     loadAchievements();
+    loadCareer();
     bindEvents();
+    setupResumeButton();
+    setupAutoSave();
+    maybeShowTutorial();
     // 容器环境（iframe/webview）布局可能迟于 DOMContentLoaded：延迟补几次尺寸校正
     [200, 600, 1500].forEach((ms) => setTimeout(resize, ms));
     // 初始化付费系统

@@ -7,6 +7,9 @@
   <meta name="description" content="合成星核 - 一款轻量上头的休闲益智游戏，点击相邻同色能量核心合成更高级星核，挑战连锁爆发。" />
   <title>合成星核 · Star Core Merge</title>
   <link rel="manifest" href="manifest.json" />
+  <!-- 广告 SDK 预连接：提前完成 DNS 解析与 TLS 握手，首次看广告更快 -->
+  <link rel="dns-prefetch" href="//qzs.qq.com" />
+  <link rel="preconnect" href="https://qzs.qq.com" crossorigin />
   <link rel="apple-touch-icon" href="store/icon-192.png" />
   <link rel="stylesheet" href="css/style.css" />
 </head>
@@ -37,6 +40,12 @@
     <div id="energyBar" class="energy-bar">
       <div class="energy-fill" id="energyFill"></div>
       <span class="energy-label" id="energyLabel">能量 0/20</span>
+    </div>
+
+    <!-- 连击计时条：显示连击剩余宽容时间 -->
+    <div id="comboBar" class="combo-bar hidden">
+      <div class="combo-fill" id="comboFill"></div>
+      <span class="combo-label" id="comboLabel">连击 x0</span>
     </div>
 
     <!-- 道具栏 -->
@@ -83,6 +92,7 @@
       <button class="btn" data-mode="daily" id="dailyBtn">📅 每日挑战</button>
       <button class="btn ghost" id="boardBtn">🏆 排行榜</button>
       <button class="btn ghost" id="achBtn">🎖️ 成就墙</button>
+      <button class="btn ghost" id="careerBtn">📊 生涯统计</button>
       <button class="btn ghost" id="shopBtn">🛒 道具商店</button>
       <button class="btn ghost" id="adBtn">📺 看广告领星核币</button>
       <p class="tip">最高分自动保存在本机</p>
@@ -142,6 +152,45 @@
     </div>
   </div>
 
+  <!-- 生涯统计 -->
+  <div id="careerOverlay" class="overlay hidden">
+    <div class="panel">
+      <h2>📊 生涯统计</h2>
+      <div id="careerGrid" class="career-grid"></div>
+      <button class="btn primary" id="careerCloseBtn">返回</button>
+    </div>
+  </div>
+
+  <!-- 新手引导（首次进入，仅显示一次） -->
+  <div id="tutorialOverlay" class="overlay hidden">
+    <div class="panel">
+      <h2>🎮 怎么玩</h2>
+      <div class="tut-steps">
+        <div class="tut-step">
+          <span class="tut-emoji">1️⃣</span>
+          <div><b>合成升级</b><br />点击一个核心，再点<b>相邻同色</b>核心即可合成更高级星核</div>
+        </div>
+        <div class="tut-step">
+          <span class="tut-emoji">💥</span>
+          <div><b>星核爆发</b><br />合成到 <b>7 级</b>会引爆，清掉周围核心并连锁得分</div>
+        </div>
+        <div class="tut-step">
+          <span class="tut-emoji">🌈</span>
+          <div><b>彩虹核心</b><br />可与任意相邻核心合成，卡关时的破局神器</div>
+        </div>
+        <div class="tut-step">
+          <span class="tut-emoji">🔗</span>
+          <div><b>连击加成</b><br />1.5 秒内连续合成累计连击，倍率越滚越高</div>
+        </div>
+        <div class="tut-step">
+          <span class="tut-emoji">🛠️</span>
+          <div><b>四种道具</b><br />闪电 / 炸弹 / 洗牌 / 提示，卡住了就用</div>
+        </div>
+      </div>
+      <button class="btn primary" id="tutorialStartBtn">开始游戏</button>
+    </div>
+  </div>
+
   <!-- 连击风暴提示 -->
   <div id="comboBanner" class="combo-banner"></div>
 
@@ -198,9 +247,30 @@
     </div>
   </div>
 
+  <!--
+    真实广告配置（优量汇 H5 激励视频，仅 H5/Web 端生效）：
+    在优量汇后台 https://developers.adnet.qq.com 创建「激励视频」广告位后，
+    填入下面两项即可启用真实广告；留空则自动降级为内置模拟广告，游戏功能不受影响。
+  -->
+  <script>
+    window.AD_CONFIG = {
+      ylhAppId: '',   // 优量汇应用 ID（如 "110xxxxxxx"）
+      ylhSlotId: '',  // 优量汇激励视频广告位 ID
+    };
+  </script>
   <script src="js/audio.js"></script>
   <script src="js/ads.js"></script>
   <script src="js/shop.js"></script>
   <script src="js/game.js"></script>
+  <!-- PWA：注册 Service Worker 以支持离线打开与安装到桌面（需 https 或 localhost） -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('sw.js').catch(function (err) {
+          console.warn('[SW] 注册失败：', err);
+        });
+      });
+    }
+  </script>
 </body>
 </html>
