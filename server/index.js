@@ -8,6 +8,7 @@ const path = require('path');
 const express = require('express');
 const cors = require('cors');
 const config = require('./config');
+const compression = require('compression');
 
 const app = express();
 app.set('trust proxy', true);
@@ -15,6 +16,9 @@ app.set('trust proxy', true);
 // CORS：仅允许 H5_ORIGIN 显式声明的来源（逗号分隔），未声明的跨域来源一律不放行
 const origins = config.h5Origin.split(',').map(s => s.trim()).filter(Boolean);
 app.use(cors({ origin: origins }));
+
+// 部署层 gzip/brotli：对文本类响应（HTML/JS/CSS/JSON）按 Accept-Encoding 自动协商压缩
+app.use(compression());
 
 // 保留原始 body 供微信回调验签/解密
 app.use(express.json({
