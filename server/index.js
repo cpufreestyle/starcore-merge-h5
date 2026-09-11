@@ -20,6 +20,33 @@ app.use(cors({ origin: origins }));
 // 部署层 gzip/brotli：对文本类响应（HTML/JS/CSS/JSON）按 Accept-Encoding 自动协商压缩
 app.use(compression());
 
+// 部署层安全响应头（基础加固）
+// 注意：这些头仅作用于由本服务托管的 web 分发；Android 壳走本地 file:// 不受影响。
+app.use((req, res, next) => {
+  // 禁止浏览器对响应 MIME 做嗅探（防 MIME 嗅探型 XSS）
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  // Referrer 仅在同源或同安全级别时携带，避免跨站泄露完整路径
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  // 基础 CSP：默认仅自身；放行内联脚本/样式（index.html 含 AD_CONFIG 等内联逻辑）
+  // 与 https 第三方（优量汇/穿山甲广告 SDK 会注入脚本、建立连接，并可能用到 eval/wasm）。
+  // 这是“不破坏广告”的宽松配置；若要更强防护可改为 nonce 方案（需改 index.html 与 SDK 接入）。
+  res.setHeader('Content-Security-Policy',
+    "default-src 'self'; " +
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; " +
+    "style-src 'self' 'unsafe-inline'; " +
+    "img-src 'self' data: https:; " +
+    "font-src 'self' data:; " +
+    "connect-src 'self' https:; " +
+    "frame-src 'self' https:; " +
+    "media-src 'self' data: https:;");
+  // HSTS：仅当经反向代理以 HTTPS 访问时下发，避免纯 HTTP 部署被锁死
+  const proto = req.headers['x-forwarded-proto'];
+  if (req.secure || proto === 'https') {
+    res.setHeader('Strict-Transport-Security', 'max-age=31536000');
+  }
+  next();
+});
+
 // 保留原始 body 供微信回调验签/解密
 app.use(express.json({
   limit: '100kb',

@@ -95,3 +95,14 @@ server {
 ```
 
 Cloudflare / 阿里云 CDN 等开启"自动 HTTPS + HTTP/2 + Brotli"后同理，后端无需改动。
+
+### 安全响应头（已在应用层启用）
+
+`server/index.js` 对所有由本服务托管的响应下发基础安全头：
+
+- `X-Content-Type-Options: nosniff` —— 禁止 MIME 嗅探。
+- `Referrer-Policy: strict-origin-when-cross-origin` —— 跨站时不泄露完整路径。
+- `Content-Security-Policy` —— 默认 `default-src 'self'`，脚本/样式放行内联（index.html 含 `AD_CONFIG` 等内联逻辑）与 `https:` 第三方（优量汇/穿山甲广告 SDK 会注入脚本、建立连接，并可能用到 `eval`/`wasm`，故含 `unsafe-eval`）。这是"不破坏广告"的宽松配置；若要更强防护可改为 **nonce 方案**（需改 `index.html` 与广告接入）。
+- `Strict-Transport-Security: max-age=31536000` —— 仅当请求经反向代理以 HTTPS 访问（`X-Forwarded-Proto: https` 或 `req.secure`）时下发，纯 HTTP 部署不会被锁死。
+
+> 这些头**只作用于 web 分发**；Android 壳内 H5 走本地 `file://`，不经过本服务，不受影响。上线前请用真实广告 SDK 跑一遍，确认 CSP 未拦截广告渲染/回调。
