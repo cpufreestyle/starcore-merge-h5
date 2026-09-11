@@ -48,3 +48,50 @@ npm start                   # 生产模式（NODE_ENV=production）
 ## 数据
 
 SQLite（WAL 模式）存于 `DB_PATH`（默认 `server/data/starcore.db`，已 gitignore），包含 `users`、`orders`、`transactions` 三张表，首次启动自动建表。
+
+## 部署层优化
+
+### 压缩（已在应用层启用）
+
+`server/index.js` 已通过 `compression` 中间件按 `Accept-Encoding` 自动协商 **gzip / brotli**，对 HTML/JS/CSS/JSON 生效。若前端再挂 Nginx/CDN，其 brotli 会与之一致，无需关闭应用层压缩。
+
+### 缓存策略（已在应用层启用）
+
+- 静态资源（`/js/*`、`/css/*`、`/manifest.json`）：`Cache-Control: public, max-age=300, must-revalidate`，并带 `ETag`（内容哈希）重校验。
+- `index.html` 与 `/sw.js`：`Cache-Control: no-cache`，始终重校验，保证发版即时生效。
+
+> 注意：当前资源 URL 未做内容哈希（如 `game.ab12cd.js`），因此短缓存 + `must-revalidate` 是安全折中——发版后最多 5 分钟生效。若改为**内容哈希文件名**并让 `index.html` 引用之，即可升级为 `Cache-Control: public, max-age=31536000, immutable` 的强缓存，获得最佳性能（需引入一次构建/重命名步骤，与本项目"源码直引"惯例冲突，故未做）。
+
+### HTTP/2（应用层需 TLS，建议在反向代理 / CDN 启用）
+
+Node 应用本身以 HTTP/1.1 监听 `:3000`，**HTTP/2 应在前置 Nginx / CDN 终止 TLS 后启用**（浏览器不支持 h2c 明文）。示例（Nginx，前端为 `play.example.com`，回源到本服务）：
+
+```nginx
+server {
+    listen 443 ssl http2;
+    server_name play.example.com;
+
+    ssl_certificate     /etc/nginx/certs/fullchain.pem;
+    ssl_certificate_key /etc/nginx/certs/privkey.pem;
+    ssl_protocols       TLSv1.2 TLSv1.3;
+
+    # brotli（需 nginx 编译 --with-http_brotli_module 或 nginx-plus）
+    brotli on;
+    brotli_comp_level 6;
+    brotli_types text/css application/javascript application/json application/manifest+json image/svg+xml;
+
+    gzip on;
+    gzip_types text/css application/javascript application/json application/manifest+json;
+    gzip_min_length 1024;
+
+    # 全站回源
+    location / {
+        proxy_pass http://127.0.0.1:3000;
+        proxy_set_header Host              $host;
+        proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+```
+
+Cloudflare / 阿里云 CDN 等开启"自动 HTTPS + HTTP/2 + Brotli"后同理，后端无需改动。

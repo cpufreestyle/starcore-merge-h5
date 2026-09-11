@@ -36,12 +36,33 @@ app.get('/api/health', (req, res) => {
   res.json({ ok: true, version: require('../package.json').version, dev: config.isDev });
 });
 
+// 部署层缓存策略：
+// - 文本类静态资源（js/css/manifest）允许客户端缓存 5 分钟并按 ETag 重校验，发版后最多 5 分钟生效；
+//   因资源 URL 未做内容哈希，故用 must-revalidate 兜底一致性，避免长期脏缓存。
+// - index.html 与 service worker 始终重校验，保证发版即时生效、SW 不被旧缓存卡住。
+const STATIC_CACHE = 'public, max-age=300, must-revalidate';
+function setStaticHeaders(res) {
+  res.setHeader('Cache-Control', STATIC_CACHE);
+}
+const staticOpts = { maxAge: 300 * 1000, etag: true, setHeaders: setStaticHeaders };
+
 // 托管 H5 静态资源（仅游戏本体，不暴露仓库根目录的安装包等文件）
 const h5Root = path.join(__dirname, '..');
-app.use('/css', express.static(path.join(h5Root, 'css')));
-app.use('/js', express.static(path.join(h5Root, 'js')));
-app.get('/manifest.json', (req, res) => res.sendFile(path.join(h5Root, 'manifest.json')));
-app.get('/', (req, res) => res.sendFile(path.join(h5Root, 'index.html')));
+app.use('/css', express.static(path.join(h5Root, 'css'), staticOpts));
+app.use('/js', express.static(path.join(h5Root, 'js'), staticOpts));
+app.get('/manifest.json', (req, res) => {
+  res.setHeader('Cache-Control', STATIC_CACHE);
+  res.sendFile(path.join(h5Root, 'manifest.json'));
+});
+// service worker：PWA 在 web 分发下由本服务直接托管，必须始终重校验
+app.get('/sw.js', (req, res) => {
+  res.setHeader('Cache-Control', 'no-cache');
+  res.sendFile(path.join(h5Root, 'sw.js'));
+});
+app.get('/', (req, res) => {
+  res.setHeader('Cache-Control', 'no-cache');
+  res.sendFile(path.join(h5Root, 'index.html'));
+});
 
 // API 404 与错误兜底
 app.use('/api', (req, res) => res.status(404).json({ error: 'not found' }));
