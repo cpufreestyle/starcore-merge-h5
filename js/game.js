@@ -299,6 +299,7 @@
     gap = boardPx * 0.025;
     cell = (boardPx - pad * 2 - gap * (GRID - 1)) / GRID;
     buildNebulaSprites();
+    buildCoreSprites();
   }
 
   // 预渲染星云精灵（一次性径向渐变），每帧仅 drawImage 到位，避免每帧 createRadialGradient
@@ -317,6 +318,37 @@
       nctx.fillRect(0, 0, boardPx, boardPx);
       return cv;
     });
+  }
+
+  // 预渲染核心精灵（一次性径向渐变 + 数字），每帧仅 drawImage 到位。
+  // 静态核心 size==cell，drawImage 在 dpr 变换下为 1:1，与原实时绘制像素一致；
+  // born/pop 动画期间 size 略变，缩放可接受。彩虹核心色相逐帧旋转，单独实时绘制。
+  let coreSprites = {};
+  function buildCoreSprites() {
+    if (!cell || !dpr) return;
+    coreSprites = {};
+    const S = Math.round(cell * dpr);
+    if (S <= 0) return;
+    for (let lv = 1; lv <= 8; lv++) {
+      const cv = document.createElement('canvas');
+      cv.width = S; cv.height = S;
+      const g = cv.getContext('2d');
+      const color = COLORS[lv] || '#888';
+      const sz = S, cx = S / 2, cy = S / 2;
+      roundRect(g, 0, 0, S, S, S * 0.2);
+      const grad = g.createRadialGradient(cx - S * 0.18, cy - S * 0.18, S * 0.1, cx, cy, S * 0.75);
+      grad.addColorStop(0, LIGHTEN_COLORS[lv] || lighten(color, 0.35));
+      grad.addColorStop(1, color);
+      g.fillStyle = grad;
+      g.fill();
+      // 数字（随等级固定，一并烘焙进精灵，省去每帧 ctx.font/fillText）
+      g.fillStyle = '#0b0b1f';
+      g.font = '800 ' + Math.round(S * 0.42) + 'px sans-serif';
+      g.textAlign = 'center';
+      g.textBaseline = 'middle';
+      g.fillText(String(lv), cx, cy + S * 0.02);
+      coreSprites[lv] = cv;
+    }
   }
   function cellRect(r, c) {
     const x = pad + c * (cell + gap);
@@ -1345,15 +1377,13 @@
   function drawCore(cx, cy, size, level, isSel, now, alpha, hintGlow, isRainbow) {
     const half = size / 2;
     const x = cx - half, y = cy - half;
-    const color = COLORS[level] || '#888';
     ctx.save();
     if (alpha != null) ctx.globalAlpha = alpha;
 
-    // 主体圆角方块 + 径向高光
-    roundRect(ctx, x, y, size, size, size * 0.2);
     if (isRainbow) {
-      // 彩虹核心：旋转色相渐变
+      // 彩虹核心：色相逐帧旋转，无法预渲染，保持实时绘制
       const hue = (now / 20) % 360;
+      roundRect(ctx, x, y, size, size, size * 0.2);
       const grad = ctx.createRadialGradient(cx - size * 0.18, cy - size * 0.18, Math.max(0, size * 0.1), cx, cy, Math.max(0, size * 0.75));
       grad.addColorStop(0, 'hsl(' + (hue + 60) + ',90%,75%)');
       grad.addColorStop(0.5, 'hsl(' + hue + ',85%,60%)');
@@ -1368,12 +1398,32 @@
       ctx.strokeStyle = 'hsla(' + ((hue + 120) % 360) + ',90%,70%,0.6)';
       roundRect(ctx, x, y, size, size, size * 0.2);
       ctx.stroke();
+      // 数字（彩虹核心等级固定，仍实时绘制）
+      ctx.fillStyle = '#0b0b1f';
+      ctx.font = '800 ' + Math.round(size * 0.42) + 'px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(String(level), cx, cy + size * 0.02);
     } else {
-      const grad = ctx.createRadialGradient(cx - size * 0.18, cy - size * 0.18, Math.max(0, size * 0.1), cx, cy, Math.max(0, size * 0.75));
-      grad.addColorStop(0, LIGHTEN_COLORS[level] || lighten(color, 0.35));
-      grad.addColorStop(1, color);
-      ctx.fillStyle = grad;
-      ctx.fill();
+      // 非彩虹核心：复用离屏精灵（含径向渐变 + 数字），仅 drawImage 到位
+      const sp = coreSprites[level];
+      if (sp) {
+        ctx.drawImage(sp, x, y, size, size);
+      } else {
+        // 兜底：精灵未就绪时退回实时绘制，避免白块
+        const color = COLORS[level] || '#888';
+        roundRect(ctx, x, y, size, size, size * 0.2);
+        const grad = ctx.createRadialGradient(cx - size * 0.18, cy - size * 0.18, Math.max(0, size * 0.1), cx, cy, Math.max(0, size * 0.75));
+        grad.addColorStop(0, LIGHTEN_COLORS[level] || lighten(color, 0.35));
+        grad.addColorStop(1, color);
+        ctx.fillStyle = grad;
+        ctx.fill();
+        ctx.fillStyle = '#0b0b1f';
+        ctx.font = '800 ' + Math.round(size * 0.42) + 'px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(String(level), cx, cy + size * 0.02);
+      }
     }
 
     // 选中发光
@@ -1399,12 +1449,6 @@
       ctx.shadowBlur = 0;
     }
 
-    // 数字
-    ctx.fillStyle = '#0b0b1f';
-    ctx.font = '800 ' + Math.round(size * 0.42) + 'px sans-serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(String(level), cx, cy + size * 0.02);
     ctx.restore();
   }
 
