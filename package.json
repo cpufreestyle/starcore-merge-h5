@@ -6,7 +6,9 @@
   "scripts": {
     "start": "node server/index.js",
     "dev": "node server/index.js --dev",
+    "serve": "node scripts/serve.mjs",
     "serve:h5": "npx http-server . -p 8080 -c-1 --cors",
+    "build:taptap": "node scripts/build-taptap.mjs",
     "install:server": "npm install express cors compression better-sqlite3 axios uuid dotenv",
     "init:db": "node server/db.js --init"
   },
