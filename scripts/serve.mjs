@@ -2,7 +2,7 @@
 // 本地静态服务器(零依赖):调试 H5 页面用,替代 npx http-server(免网络下载)。
 // 用法: node scripts/serve.mjs [端口]  默认 8080;响应带 no-cache 与 CORS 头。
 import { createServer } from 'node:http';
-import { readFile, stat } from 'node:fs/promises';
+import { readFile, stat, writeFile } from 'node:fs/promises';
 import { extname, join, normalize, resolve, sep } from 'node:path';
 import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -31,6 +31,18 @@ const MIME = {
 
 const server = createServer(async (req, res) => {
   try {
+    // 开发辅助: POST /save?name=xxx 把请求体写入 store/(页面内录制的视频经此回传)
+    if (req.method === 'POST' && req.url.startsWith('/save')) {
+      const name = (new URL(req.url, 'http://x').searchParams.get('name') || '').replace(/[^\w.\-]/g, '');
+      if (!name) { res.writeHead(400).end('bad name'); return; }
+      const chunks = [];
+      for await (const c of req) chunks.push(c);
+      const body = Buffer.concat(chunks);
+      await writeFile(join(root, 'store', name), body);
+      console.log(`[serve] saved store/${name} (${body.length} bytes)`);
+      res.writeHead(200, { 'Content-Type': 'text/plain', 'Access-Control-Allow-Origin': '*' }).end('ok');
+      return;
+    }
     let path = decodeURIComponent(new URL(req.url, 'http://x').pathname);
     if (path.endsWith('/')) path += 'index.html';
     const file = normalize(join(root, path));

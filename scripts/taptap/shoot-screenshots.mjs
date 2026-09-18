@@ -1,9 +1,11 @@
-// 用法: node --experimental-websocket cdp-shots.mjs
-// 把真实 Chrome 窗口缩到手机竖屏尺寸,拍 4 张 v1.4.1 游戏截图(无尽/计时/解谜/爆发)。
+// 用法: node --experimental-websocket shoot-screenshots.mjs [debugUrl]
+// 拍 4 张 v1.4.1 游戏截图(无尽/计时/解谜/爆发)。
+// 要点: 用 Emulation 模拟 720x1280 竖屏布局 + captureBeyondViewport 抓完整帧;
+//       Chrome 152 无 Browser.enable,窗口尺寸用启动参数 --window-size 控制。
 import process from 'node:process';
 import fs from 'node:fs';
 
-const debugUrl = process.argv[2] || 'http://127.0.0.1:49351';
+const debugUrl = process.argv[2] || 'http://127.0.0.1:49352';
 const dir = 'D:/ai share/repo/starcore-merge-h5/store/screenshots/';
 if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
 
@@ -30,18 +32,15 @@ ws.onmessage = (ev) => {
 };
 await new Promise((r) => (ws.onopen = r));
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-
-// 窗口尺寸由启动参数 --window-size 控制(Chrome 152 无 Browser.enable)
-await sleep(900);
-const vp = await send('Runtime.evaluate', { expression: 'JSON.stringify({ w: innerWidth, h: innerHeight })', returnByValue: true });
-console.log('viewport ' + vp.result.value);
-
-const evalJson = async (expr) => {
+const ev = async (expr) => {
   const r = await send('Runtime.evaluate', { expression: expr, returnByValue: true });
   return r.result ? r.result.value : null;
 };
+const ver = await (await fetch(`${debugUrl}/json/version`)).json();
+const headless = /HeadlessChrome/i.test(ver['User-Agent'] || '');
 const shoot = async (name) => {
-  const s = await send('Page.captureScreenshot', { format: 'png', fromSurface: false });
+  // 无头浏览器必须从 surface 抓帧;有头浏览器 fromSurface:false 才能绕开合成器冻结帧
+  const s = await send('Page.captureScreenshot', { format: 'png', fromSurface: headless });
   fs.writeFileSync(dir + name, Buffer.from(s.data, 'base64'));
   console.log('saved ' + name);
 };
@@ -52,74 +51,87 @@ const clickAt = async (x, y) => {
   await sleep(80);
   await send('Input.dispatchMouseEvent', { type: 'mouseReleased', x, y, button: 'left', buttons: 0, clickCount: 1 });
 };
-const clickMenu = async (mode) => {
-  const pos = await evalJson(`(() => {
+const rectOf = (expr) => ev(`(() => { const b = ${expr}; if (!b) return null; b.scrollIntoView({block:'center',behavior:'instant'}); const r = b.getBoundingClientRect(); return JSON.stringify({x:r.x+r.width/2,y:r.y+r.height/2}); })()`);
+const startMode = async (mode) => {
+  // 纯 JS 游戏,直接触发 DOM click(设备模拟下 CDP 鼠标事件坐标不可靠)
+  const ok = await ev(`(() => {
     const b = document.querySelector('#menuOverlay .btn[data-mode="${mode}"]');
-    if (!b) return null;
-    b.scrollIntoView({ block: 'center', behavior: 'instant' });
-    const r = b.getBoundingClientRect();
-    return JSON.stringify({ x: r.x + r.width / 2, y: r.y + r.height / 2 });
+    if (!b) return false;
+    b.click();
+    return true;
   })()`);
-  if (!pos) { console.error('menu btn missing: ' + mode); process.exit(1); }
-  await sleep(300);
-  const p = JSON.parse(pos);
-  await clickAt(p.x, p.y);
+  if (!ok) { console.error('menu btn missing: ' + mode); process.exit(1); }
+  await sleep(1300);
+  const started = await ev(`(() => { const m = document.getElementById('menuOverlay'); return !!(m && m.classList.contains('hidden')); })()`);
+  console.log('mode ' + mode + ' started=' + started);
+  // 关掉首次进入的"怎么玩"教程弹窗
+  const dismissed = await ev(`(() => {
+    const words = ['开始游戏', '知道了', '我明白了', '关闭', '继续', '好的'];
+    const b = [...document.querySelectorAll('button, .btn')].find((x) => {
+      if (x.offsetParent === null) return false;
+      const t = (x.textContent || '').trim();
+      return words.some((w) => t === w || t.includes(w));
+    });
+    if (!b) return null;
+    b.click();
+    return b.textContent.trim();
+  })()`);
+  if (dismissed) { console.log('dismissed: ' + dismissed); await sleep(700); }
 };
 
 await send('Page.enable');
 await send('Runtime.enable');
-await send('Page.navigate', { url: 'http://localhost:8899/' });
-await sleep(3500);
+// 无头 Chrome 下窗口即视口,dsf=1 → 输出 720x1280
+await send('Emulation.setDeviceMetricsOverride', { width: 720, height: 1280, deviceScaleFactor: 1, mobile: true });
+
+const load = async () => {
+  await send('Page.navigate', { url: 'http://localhost:8899/' });
+  await sleep(3200);
+};
 
 // 1. 无尽
-await clickMenu('classic');
-await sleep(1500);
+await load();
+await startMode('classic');
+await sleep(1200);
 await shoot('shot-endless.png');
 
 // 2. 计时
-await send('Page.navigate', { url: 'http://localhost:8899/' });
-await sleep(3000);
-await clickMenu('timed');
-await sleep(1800);
+await load();
+await startMode('timed');
+await sleep(1600);
 await shoot('shot-timed.png');
 
-// 3. 解谜(点开始挑战)
-await send('Page.navigate', { url: 'http://localhost:8899/' });
-await sleep(3000);
-await clickMenu('puzzle');
-await sleep(1200);
-const startBtn = await evalJson(`(() => {
-  const b = [...document.querySelectorAll('button, .btn')].find(x => (x.textContent || '').trim().includes('开始挑战') && x.offsetParent !== null);
-  if (!b) return null;
-  const r = b.getBoundingClientRect();
-  return JSON.stringify({ x: r.x + r.width / 2, y: r.y + r.height / 2 });
+// 3. 解谜
+await load();
+await startMode('puzzle');
+await sleep(900);
+await ev(`(() => {
+  const b = [...document.querySelectorAll('button, .btn')].find(x => (x.textContent||'').trim().includes('开始挑战') && x.offsetParent !== null);
+  if (b) b.click();
 })()`);
-if (startBtn) await clickAt(JSON.parse(startBtn).x, JSON.parse(startBtn).y);
-await sleep(1800);
+await sleep(1600);
 await shoot('shot-puzzle.png');
 
 // 4. 爆发瞬间
-await send('Page.navigate', { url: 'http://localhost:8899/' });
-await sleep(3000);
-await clickMenu('classic');
-await sleep(800);
-await evalJson(`(() => {
+await load();
+await startMode('classic');
+await sleep(700);
+await ev(`(() => {
   const mk = (level) => ({ level, born: performance.now() - 1000, pop: 0, rainbow: false });
-  const g = [
+  window.__SC_DEBUG.setGrid([
     [mk(1), mk(1), mk(2), mk(3), mk(2)],
     [mk(3), mk(2), mk(1), mk(2), mk(3)],
     [mk(2), mk(3), mk(4), mk(1), mk(2)],
     [mk(1), mk(2), mk(3), mk(2), mk(1)],
     [mk(4), mk(1), mk(2), mk(3), mk(2)],
-  ];
-  window.__SC_DEBUG.setGrid(g);
+  ]);
 })()`);
 await sleep(300);
-await evalJson(`window.__SC_DEBUG.doMergeDebug({ r: 0, c: 0 }, { r: 0, c: 1 })`);
+await ev(`window.__SC_DEBUG.doMergeDebug({ r: 0, c: 0 }, { r: 0, c: 1 })`);
 await sleep(280);
 await shoot('shot-burst.png');
 
-// 恢复窗口大小交给启动参数,脚本结束时无需处理
+await send('Emulation.clearDeviceMetricsOverride');
 console.log('all shots done');
 ws.close();
 process.exit(0);
